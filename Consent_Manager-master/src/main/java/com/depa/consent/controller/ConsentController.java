@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @RestController
 @RequestMapping("/api/consents")
 @PreAuthorize("isAuthenticated()")
@@ -26,10 +29,11 @@ public class ConsentController {
      * Data Principal views their pending consent requests.
      */
     @GetMapping("/pending")
-    public ResponseEntity<List<ConsentRequestResponse>> getPendingConsentRequests(
-            @AuthenticationPrincipal UserPrincipal actor
+    public ResponseEntity<Page<ConsentRequestResponse>> getPendingConsentRequests(
+            @AuthenticationPrincipal UserPrincipal actor,
+            Pageable pageable
     ) {
-        return ResponseEntity.ok(consentService.getPendingConsentRequestsForPrincipal(actor));
+        return ResponseEntity.ok(consentService.getPendingConsentRequestsForPrincipal(actor, pageable));
     }
 
     @GetMapping("/requests/{id}")
@@ -88,9 +92,10 @@ public class ConsentController {
      * Data Principal views their active/past consents.
      */
     @GetMapping
-    public ResponseEntity<List<ConsentResponse>> getConsents(
-            @AuthenticationPrincipal UserPrincipal actor
+    public ResponseEntity<Page<ConsentResponse>> getConsents(
+            @AuthenticationPrincipal UserPrincipal actor,
+            Pageable pageable
     ) {
-        return ResponseEntity.ok(consentService.getConsentsForPrincipal(actor));
+        return ResponseEntity.ok(consentService.getConsentsForPrincipal(actor, pageable));
     }
 }

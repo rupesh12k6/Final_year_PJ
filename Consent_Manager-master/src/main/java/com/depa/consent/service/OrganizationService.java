@@ -115,6 +115,13 @@ public class OrganizationService {
     }
 
     @Transactional(readOnly = true)
+    public java.util.Map<String, Organization> getOrganizationsByIds(java.util.Set<String> ids) {
+        return organizationRepository.findAllById(ids)
+                .stream()
+                .collect(Collectors.toMap(Organization::getOrganizationId, org -> org));
+    }
+
+    @Transactional(readOnly = true)
     public Organization getOrganizationEntityByCode(String code) {
         return organizationRepository.findByOrganizationCode(code.trim().toUpperCase())
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with code: " + code));

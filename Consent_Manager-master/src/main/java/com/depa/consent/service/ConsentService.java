@@ -17,8 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -81,18 +87,34 @@ public class ConsentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ConsentRequestResponse> getPendingConsentRequestsForPrincipal(UserPrincipal actor) {
+    public Page<ConsentRequestResponse> getPendingConsentRequestsForPrincipal(UserPrincipal actor, Pageable pageable) {
         validateDataPrincipalActor(actor);
 
         String principalId = actor.getExternalIdentityId().trim().toUpperCase();
         String orgId = actor.getOrganizationId();
 
-        List<ConsentRequest> list = consentRequestRepository
-                .findByDataPrincipalIdAndDataPrincipalOrganizationIdAndStatus(principalId, orgId, ConsentRequestStatus.PENDING);
+        Page<ConsentRequest> page = consentRequestRepository
+                .findByDataPrincipalIdAndDataPrincipalOrganizationIdAndStatus(principalId, orgId, ConsentRequestStatus.PENDING, pageable);
 
-        return list.stream()
-                .map(this::mapToConsentRequestResponse)
-                .collect(Collectors.toList());
+        Set<String> orgIds = new HashSet<>();
+        page.getContent().forEach(req -> {
+            orgIds.add(req.getDataPrincipalOrganizationId());
+            orgIds.add(req.getRequesterOrganizationId());
+        });
+        
+        Map<String, Organization> orgMap = organizationService.getOrganizationsByIds(orgIds);
+
+        return page.map(req -> {
+            Organization providerOrg = orgMap.get(req.getDataPrincipalOrganizationId());
+            Organization requesterOrg = orgMap.get(req.getRequesterOrganizationId());
+            return new ConsentRequestResponse(
+                    req,
+                    providerOrg != null ? providerOrg.getOrganizationCode() : "UNKNOWN",
+                    providerOrg != null ? providerOrg.getName() : "Unknown",
+                    requesterOrg != null ? requesterOrg.getOrganizationCode() : "UNKNOWN",
+                    requesterOrg != null ? requesterOrg.getName() : "Unknown"
+            );
+        });
     }
 
     @Transactional(readOnly = true)
@@ -290,21 +312,32 @@ public class ConsentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ConsentResponse> getConsentsForPrincipal(UserPrincipal actor) {
+    public Page<ConsentResponse> getConsentsForPrincipal(UserPrincipal actor, Pageable pageable) {
         validateDataPrincipalActor(actor);
 
-        List<Consent> consents = consentRepository.findByDataPrincipalIdAndProviderOrganizationId(
+        Page<Consent> page = consentRepository.findByDataPrincipalIdAndProviderOrganizationId(
                 actor.getExternalIdentityId().trim().toUpperCase(),
-                actor.getOrganizationId()
+                actor.getOrganizationId(),
+                pageable
         );
 
-        return consents.stream()
-                .map(c -> {
-                    Organization providerOrg = organizationService.getOrganizationEntityById(c.getProviderOrganizationId());
-                    Organization requesterOrg = organizationService.getOrganizationEntityById(c.getRequesterOrganizationId());
-                    return new ConsentResponse(c, providerOrg.getOrganizationCode(), requesterOrg.getOrganizationCode());
-                })
-                .collect(Collectors.toList());
+        Set<String> orgIds = new HashSet<>();
+        page.getContent().forEach(c -> {
+            orgIds.add(c.getProviderOrganizationId());
+            orgIds.add(c.getRequesterOrganizationId());
+        });
+        
+        Map<String, Organization> orgMap = organizationService.getOrganizationsByIds(orgIds);
+
+        return page.map(c -> {
+            Organization providerOrg = orgMap.get(c.getProviderOrganizationId());
+            Organization requesterOrg = orgMap.get(c.getRequesterOrganizationId());
+            return new ConsentResponse(
+                    c, 
+                    providerOrg != null ? providerOrg.getOrganizationCode() : "UNKNOWN", 
+                    requesterOrg != null ? requesterOrg.getOrganizationCode() : "UNKNOWN"
+            );
+        });
     }
 
     private void validateDataPrincipalActor(UserPrincipal actor) {

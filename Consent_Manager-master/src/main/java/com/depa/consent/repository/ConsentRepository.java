@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Repository
 public interface ConsentRepository extends JpaRepository<Consent, String> {
-    List<Consent> findByDataPrincipalIdAndProviderOrganizationId(String dataPrincipalId, String providerOrganizationId);
-    List<Consent> findByDataPrincipalIdAndProviderOrganizationIdAndStatus(String dataPrincipalId, String providerOrganizationId, ConsentStatus status);
+    Page<Consent> findByDataPrincipalIdAndProviderOrganizationId(String dataPrincipalId, String providerOrganizationId, Pageable pageable);
+    Page<Consent> findByDataPrincipalIdAndProviderOrganizationIdAndStatus(String dataPrincipalId, String providerOrganizationId, ConsentStatus status, Pageable pageable);
     Optional<Consent> findByConsentRequestId(String consentRequestId);
 }
