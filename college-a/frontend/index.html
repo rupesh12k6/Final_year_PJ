@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College A University — Academic Provider Node</title>
+    <meta name="description" content="College A Academic Registrar and Student Credential Portal on the DEPA Academic Trust Network.">
+
+    <!-- Prebuilt UI Foundation: Bootstrap 5.3.3 & Bootstrap Icons -->
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/css/bootstrap-icons.min.css">
+
+    <!-- Custom DriveFlow Design Tokens & Styles -->
+    <link rel="stylesheet" href="css/driveflow-theme.css">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body class="df-body">
+
+    <!-- =================================================================== -->
+    <!-- 1. SPLIT-SCREEN AUTHENTICATION CONTAINER (Public Routes)            -->
+    <!-- Mounted for #/login/admin, #/login/student, #/activate              -->
+    <!-- =================================================================== -->
+    <div id="df-auth-container" style="display: none; min-height: 100vh;"></div>
+
+    <!-- =================================================================== -->
+    <!-- 2. AUTHENTICATED APPLICATION LAYOUT SHELL (Protected Routes)        -->
+    <!-- =================================================================== -->
+    <div id="df-app-layout" class="df-layout-wrapper" style="display: none;">
+        <!-- Backdrop for mobile drawer -->
+        <div id="df-sidebar-backdrop" class="df-sidebar-backdrop"></div>
+
+        <!-- Compact Dark Sidebar (Academic Provider Emerald) -->
+        <aside id="df-sidebar" class="df-sidebar">
+            <div class="df-sidebar-brand">
+                <div class="df-sidebar-logo" style="background: linear-gradient(135deg, #10B981, #059669);">
+                    <i class="bi bi-mortarboard-fill text-white fs-4"></i>
+                </div>
+                <div class="df-sidebar-brand-text">
+                    <span class="badge bg-white text-dark fw-bold text-uppercase" style="font-size: 0.6rem; letter-spacing: 0.04em;">PROVIDER NODE</span>
+                    <h5 class="mb-0 text-white fw-bold">College A Univ</h5>
+                </div>
+            </div>
+
+            <!-- Authenticated User Profile Summary -->
+            <div class="df-sidebar-profile">
+                <div class="df-user-avatar" id="df-user-avatar">CA</div>
+                <div class="df-user-info">
+                    <div class="df-user-name" id="df-user-name">Loading...</div>
+                    <div class="df-user-role" id="df-user-role">Student</div>
+                </div>
+            </div>
+
+            <!-- Role-Specific Navigation Menu -->
+            <nav id="df-sidebar-nav" class="df-sidebar-nav"></nav>
+
+            <!-- Bottom Node Status & Quick Logout -->
+            <div class="df-sidebar-footer">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-light opacity-75 small">Node Port: <strong>8081</strong></span>
+                    <span class="badge bg-success text-white font-monospace" style="font-size: 0.65rem;">CONNECTED</span>
+                </div>
+                <button class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2" onclick="window.DF_AUTH.logout()">
+                    <i class="bi bi-box-arrow-left"></i> Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="df-main-wrapper">
+            <!-- White Top Navbar -->
+            <header class="df-topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-link text-dark p-0 d-lg-none" id="df-sidebar-toggle" title="Toggle Sidebar">
+                        <i class="bi bi-list fs-3"></i>
+                    </button>
+                    <div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill font-monospace" style="font-size: 0.7rem;">
+                            COLLEGE A DATA PROVIDER
+                        </span>
+                        <h4 class="mb-0 fw-bold text-dark fs-6 mt-1" id="df-topbar-breadcrumb">College A University Portal</h4>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Live Service Connectivity Indicators -->
+                    <div class="d-none d-sm-flex align-items-center gap-3 bg-light px-3 py-1 rounded-pill border small">
+                        <div class="d-flex align-items-center gap-1" title="College A Backend (:8081)">
+                            <span class="health-dot online" id="dot-col-a"></span>
+                            <span class="text-muted font-monospace" style="font-size: 0.75rem;">Node :8081</span>
+                        </div>
+                        <span class="text-muted opacity-50">|</span>
+                        <div class="d-flex align-items-center gap-1" title="Consent Manager (:8095)">
+                            <span class="health-dot online" id="dot-cm"></span>
+                            <span class="text-muted font-monospace" style="font-size: 0.75rem;">CM :8095</span>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Dropdown Pill -->
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm border rounded-pill d-flex align-items-center gap-2 px-3 py-1" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle text-success"></i>
+                            <span class="small fw-semibold d-none d-md-inline" id="topbar-user-email">Account</span>
+                            <i class="bi bi-chevron-down small text-muted"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--df-radius-md);">
+                            <li><h6 class="dropdown-header small text-uppercase">Signed in as</h6></li>
+                            <li><span class="dropdown-item-text fw-bold text-dark small" id="dropdown-user-display">User</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger small d-flex align-items-center gap-2" href="javascript:void(0)" onclick="window.DF_AUTH.logout()">
+                                    <i class="bi bi-box-arrow-left"></i> Sign Out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content Body -->
+            <main class="df-page-content" id="df-main-content">
+                <div class="py-5 text-center text-muted">
+                    <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                    Initializing Workspace...
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="df-toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;"></div>
+
+    <!-- =================================================================== -->
+    <!-- JAVASCRIPT INCLUDES                                                 -->
+    <!-- =================================================================== -->
+    <!-- 1. Bootstrap 5.3.3 Bundle -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 2. Configuration & Foundation -->
+    <script src="config.js"></script>
+    <script src="js/auth/session.js"></script>
+    <script src="js/services/api.js"></script>
+    <script src="js/services/records-store.js"></script>
+    <script src="js/auth/auth-controller.js"></script>
+    <script src="js/ui-components.js"></script>
+
+    <!-- 3. Authentication & Activation Pages -->
+    <script src="js/pages/login-admin.js"></script>
+    <script src="js/pages/login-student.js"></script>
+    <script src="js/pages/student-activate.js"></script>
+
+    <!-- 4. College Admin Pages -->
+    <script src="js/pages/admin/overview.js"></script>
+    <script src="js/pages/admin/students.js"></script>
+    <script src="js/pages/admin/onboarding.js"></script>
+    <script src="js/pages/admin/academic-data.js"></script>
+    <script src="js/pages/admin/new-request.js"></script>
+    <script src="js/pages/admin/requests.js"></script>
+    <script src="js/pages/admin/records.js"></script>
+    <script src="js/pages/admin/monitor.js"></script>
+    <script src="js/pages/admin/audit.js"></script>
+
+    <!-- 5. Student Self-Service Pages -->
+    <script src="js/pages/student/overview.js"></script>
+    <script src="js/pages/student/profile.js"></script>
+    <script src="js/pages/student/pending.js"></script>
+    <script src="js/pages/student/history.js"></script>
+
+    <!-- 6. Router & Main Application Controller -->
+    <script src="js/router.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -19,9 +19,9 @@
     <description>Root POM for DEPA Ecosystem</description>
 
     <modules>
-        <module>Consent_Manager-master</module>
-        <module>ORGANIZATION_A-main</module>
-        <module>ORGANIZATION_B-main</module>
+        <module>consent-manager/backend</module>
+        <module>college-a/backend</module>
+        <module>college-b/backend</module>
     </modules>
 
     <properties>

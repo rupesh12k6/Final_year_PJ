@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveFlow UI Foundation Test — College B Consumer</title>
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS (Vendor Local) -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11.3 (Vendor Local) -->
+    <link href="vendor/css/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DriveFlow Theme CSS (College B Consumer Indigo) -->
+    <link href="css/driveflow-theme.css" rel="stylesheet">
+</head>
+<body>
+    <div class="df-layout-container">
+        <!-- DriveFlow Sidebar -->
+        <aside class="df-sidebar">
+            <div class="df-sidebar-brand">
+                <div class="df-sidebar-brand-icon">
+                    <i class="bi bi-building-check"></i>
+                </div>
+                <div class="df-sidebar-brand-text">
+                    <p class="df-brand-tag">DATA CONSUMER</p>
+                    <h1 class="df-brand-title">College B</h1>
+                </div>
+            </div>
+
+            <!-- User Session Card -->
+            <div class="df-sidebar-user">
+                <div class="df-user-avatar" style="background-color: var(--df-primary);">CO</div>
+                <div class="df-user-details">
+                    <p class="df-user-email">admissions@college-b.edu</p>
+                    <div class="df-user-role-badge">
+                        <span class="df-status-dot"></span>
+                        <span>Consumer Verification Officer</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="df-sidebar-nav">
+                <p class="df-nav-section-title">Admissions Ingestion</p>
+                <a href="#overview" class="df-nav-link active">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Consumer Dashboard</span>
+                </a>
+                <a href="#requests" class="df-nav-link">
+                    <i class="bi bi-send-check-fill"></i>
+                    <span>Ingestion Requests</span>
+                    <span class="df-nav-badge text-white" style="background-color: var(--df-primary);">320</span>
+                </a>
+                <a href="#candidates" class="df-nav-link">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Applicant Dossiers</span>
+                </a>
+                <a href="#verified" class="df-nav-link">
+                    <i class="bi bi-patch-check"></i>
+                    <span>Verified Inbound Data</span>
+                </a>
+
+                <p class="df-nav-section-title mt-3">DEPA Integrations</p>
+                <a href="#providers" class="df-nav-link">
+                    <i class="bi bi-diagram-3-fill"></i>
+                    <span>Registered Providers</span>
+                </a>
+                <a href="#audit" class="df-nav-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Ingestion Logs</span>
+                </a>
+            </nav>
+
+            <div class="df-sidebar-footer">
+                <button class="df-logout-btn" id="sidebar-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="df-main-content">
+            <!-- DriveFlow Top Navbar -->
+            <header class="df-top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="df-navbar-breadcrumb">
+                        <span>COLLEGE B</span>
+                        <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
+                        <span class="text-dark">CONSUMER INGESTION PORTAL</span>
+                    </div>
+                    <div class="input-group input-group-sm d-none d-md-flex ms-3" style="max-width: 280px;">
+                        <input type="text" class="df-form-control form-control-sm" placeholder="Search applicant, request ID..." />
+                    </div>
+                </div>
+
+                <div class="df-navbar-actions">
+                    <span class="df-badge df-badge-indigo">
+                        <i class="bi bi-building"></i>
+                        <span>CONSUMER NODE LIVE</span>
+                    </span>
+                    <button class="df-icon-btn" title="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="df-icon-btn-badge bg-primary"></span>
+                    </button>
+                    <div class="d-flex align-items-center gap-2 ps-2 border-start">
+                        <div class="df-user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: var(--df-primary);">CB</div>
+                        <div class="d-none d-lg-block text-start">
+                            <div class="fw-semibold text-dark small" style="line-height: 1.1;">College B Node</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Port 8082</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Page Scrollable Content -->
+            <main class="df-content-scrollable">
+                <!-- 1. Hero Greeting Banner -->
+                <div id="hero-banner-mount"></div>
+
+                <!-- 2. StatCards Responsive Grid -->
+                <div class="row g-3 mb-4" id="stat-cards-mount"></div>
+
+                <!-- 3. Action Bar with Conic Shine Buttons & Pill Inputs -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">Consumer Controls & Data Dispatch</h5>
+                            <p class="text-muted small mb-0">Testing Indigo shine buttons, consent request modal, and SSRF-safe provider fetching.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <button type="button" class="df-btn-pill-secondary" id="btn-test-modal">
+                                <i class="bi bi-send-plus me-1"></i> New Request Modal
+                            </button>
+                            <button type="button" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-medium text-sm" id="btn-test-confirm">
+                                <i class="bi bi-x-octagon-fill me-1"></i> Cancel Stream
+                            </button>
+                            <div id="shine-btn-mount"></div>
+                        </div>
+                    </div>
+                    <div class="border-top mt-3 pt-3">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-auto text-muted small fw-semibold">Interactive Toasts:</div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="DF_UI.showToast('Student dossier cryptographically verified from College A!', 'success')">
+                                    <i class="bi bi-check-circle me-1"></i> Verify Success
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="DF_UI.showToast('Security alert: SSRF attempt to internal network blocked.', 'error')">
+                                    <i class="bi bi-shield-x me-1"></i> SSRF Blocked
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="DF_UI.showToast('Awaiting student authorization on Consent Manager.', 'warning')">
+                                    <i class="bi bi-hourglass-split me-1"></i> Awaiting Consent
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="DF_UI.showToast('Access JWT exchange with CM completed.', 'info')">
+                                    <i class="bi bi-info-circle me-1"></i> Token Exchanged
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Data Table with Gradient Header & Status Badges -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Inbound Credential Ingestion Requests</h5>
+                            <p class="text-muted small mb-0">DriveFlow table with Indigo gradient header & verification statuses</p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" class="df-form-control form-control-sm" placeholder="Search requests..." style="width: 200px;">
+                        </div>
+                    </div>
+                    <div id="datatable-mount"></div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 px-2">
+                        <span class="text-muted small">Showing 1 to 4 of 320 records</span>
+                        <div id="pagination-mount"></div>
+                    </div>
+                </div>
+
+                <!-- 5. Component States Showcase: Loading, Empty, Error -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <h6 class="fw-bold text-muted text-uppercase tracking-wider small">Standard Component State Views</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="loading-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="empty-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="error-state-mount"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.3 JS Bundle (Vendor Local) -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+    <!-- DriveFlow UI Component Library -->
+    <script src="js/ui-components.js"></script>
+
+    <!-- Test Harness Driver -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Mount Hero Banner
+            document.getElementById('hero-banner-mount').innerHTML = DF_UI.renderHeroBanner({
+                tag: 'DATA CONSUMER PORTAL',
+                title: 'Verification & Admissions Operations',
+                subtitle: 'College B Data Consumer Node — Inbound Academic Credential Ingestion Hub',
+                metrics: [
+                    { value: '320', label: 'Requests' },
+                    { value: '98.4%', label: 'Verified' },
+                    { value: '12', label: 'Active Streams' }
+                ]
+            });
+
+            // 2. Mount StatCards
+            const statCardsHtml = [
+                DF_UI.renderStatCard({ label: 'INBOUND REQUESTS', value: '320 Total', icon: 'bi-send-fill', color: 'indigo', trend: { direction: 'up', text: '+14% this month' } }),
+                DF_UI.renderStatCard({ label: 'FULFILLED & VERIFIED', value: '315 Verified', icon: 'bi-shield-check', color: 'emerald', trend: { direction: 'up', text: '98.4% rate' } }),
+                DF_UI.renderStatCard({ label: 'PENDING CONSENT', value: '3 Awaiting', icon: 'bi-clock-history', color: 'amber', trend: null }),
+                DF_UI.renderStatCard({ label: 'REJECTED / REVOKED', value: '2 Revoked', icon: 'bi-slash-circle', color: 'rose', trend: { direction: 'down', text: '0 anomalies' } })
+            ].map(card => `<div class="col-sm-6 col-xl-3">${card}</div>`).join('');
+            document.getElementById('stat-cards-mount').innerHTML = statCardsHtml;
+
+            // 3. Mount Indigo Shine Button
+            document.getElementById('shine-btn-mount').innerHTML = DF_UI.renderShineButton({
+                id: 'btn-initiate-request',
+                text: 'New Data Request',
+                icon: 'bi-send-plus-fill',
+                variant: 'indigo'
+            });
+
+            // 4. Mount DataTable with Sample College B Data
+            const sampleData = [
+                { reqId: 'REQ-2026-101', student: 'Alice Johnson', provider: 'College A', fields: 'Full Academic Dossier', date: '2026-10-30', status: 'APPROVED' },
+                { reqId: 'REQ-2026-102', student: 'Bob Williams', provider: 'College A', fields: 'Transcript & CGPA Only', date: '2026-10-31', status: 'REQUESTED' },
+                { reqId: 'REQ-2026-103', student: 'Carol Martinez', provider: 'College A', fields: 'Degree Certificate', date: '2026-10-28', status: 'REVOKED' },
+                { reqId: 'REQ-2026-104', student: 'David Lee', provider: 'College A', fields: 'Semester 1-6 Transcripts', date: '2026-10-29', status: 'FAILED' }
+            ];
+
+            const columns = [
+                { key: 'reqId', label: 'Request ID', width: '150px', render: (val) => `<span class="fw-bold font-monospace" style="color: var(--df-primary);">${val}</span>` },
+                { key: 'student', label: 'Candidate Name', render: (val) => `<span class="fw-semibold text-dark">${val}</span>` },
+                { key: 'provider', label: 'Origin Provider' },
+                { key: 'fields', label: 'Requested Scope' },
+                { key: 'date', label: 'Timestamp' },
+                { key: 'status', label: 'Verification Status', render: (val) => DF_UI.renderStatusBadge(val) },
+                { key: 'actions', label: 'Actions', render: (_, row) => `
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-light rounded-pill px-2 py-1 text-primary fw-medium" onclick="alert('Viewing verification details for: ${row.reqId}')">
+                            <i class="bi bi-file-earmark-lock2 me-1"></i>Verify
+                        </button>
+                    </div>
+                ` }
+            ];
+
+            document.getElementById('datatable-mount').innerHTML = DF_UI.renderDataTable({
+                id: 'requests-table',
+                columns: columns,
+                data: sampleData
+            });
+
+            // 5. Mount Pagination
+            document.getElementById('pagination-mount').innerHTML = DF_UI.renderPagination({
+                page: 1,
+                total: 320,
+                perPage: 10
+            });
+
+            // 6. Mount State Boxes
+            document.getElementById('loading-state-mount').innerHTML = DF_UI.renderLoadingState('Validating Consent Manager token signature...');
+            document.getElementById('empty-state-mount').innerHTML = DF_UI.renderEmptyState({
+                icon: 'bi-inbox',
+                title: 'No Pending Inquiries',
+                description: 'All inbound credential stream inquiries have been processed.'
+            });
+            document.getElementById('error-state-mount').innerHTML = DF_UI.renderErrorState({
+                title: 'SSRF Policy Violation',
+                message: 'Destination URL failed origin validation against trusted provider registry.'
+            });
+
+            // Interactive Event Handlers
+            document.getElementById('btn-test-modal').addEventListener('click', () => {
+                DF_UI.showModal({
+                    title: 'Initiate Credential Disclosure Request',
+                    contentHtml: `
+                        <p class="text-muted small">College B will construct an authorization inquiry to the Consent Manager for the candidate's verified records.</p>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Target Candidate Roll Number</label>
+                            <input type="text" class="df-form-control" placeholder="e.g. CS2026-001" value="CS2026-001">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Trusted Provider Institution</label>
+                            <select class="form-select rounded-pill">
+                                <option selected>College A (https://college-a.edu:8081)</option>
+                            </select>
+                        </div>
+                        <div class="p-3 bg-light rounded-3 mb-2">
+                            <div class="small fw-bold mb-2">Granular Scope Requested:</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="sc1" checked>
+                                <label class="form-check-label small" for="sc1">Full Transcript</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="sc2" checked>
+                                <label class="form-check-label small" for="sc2">Degree Certificate</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="sc3">
+                                <label class="form-check-label small" for="sc3">Disciplinary Record</label>
+                            </div>
+                        </div>
+                    `,
+                    footerHtml: `
+                        <button type="button" class="df-btn-pill-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" style="background-color: var(--df-primary); border-color: var(--df-primary);" onclick="DF_UI.showToast('Inbound request registered with CM', 'success')">Dispatch Ingestion Request</button>
+                    `
+                });
+            });
+
+            document.getElementById('btn-test-confirm').addEventListener('click', () => {
+                DF_UI.showConfirmDialog({
+                    title: 'Cancel Credential Ingestion Stream?',
+                    message: 'Halting this stream will terminate active verification polling and discard pending response buffers.',
+                    confirmText: 'Terminate Stream',
+                    confirmVariant: 'danger',
+                    onConfirm: async () => {
+                        await new Promise(r => setTimeout(r, 600));
+                        DF_UI.showToast('Data ingestion stream terminated.', 'success');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

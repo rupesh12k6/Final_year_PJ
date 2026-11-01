@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College A University | Academic Registrar & Student Portal</title>
+    <meta name="description" content="College A University Academic Portal. Independent Data Provider node in the DEPA Academic Trust Network.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- =============================================================== -->
+        <!-- LEFT SIDEBAR                                                    -->
+        <!-- =============================================================== -->
+        <aside class="app-sidebar" style="background-color: #064E3B; border-right-color: #065F46;">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo" style="background: linear-gradient(135deg, #10B981, #059669);">🎓</div>
+                <div class="sidebar-brand-text">
+                    <p style="color:#6EE7B7;">DATA PROVIDER NODE</p>
+                    <h2 id="sidebar-portal-name">College A University</h2>
+                </div>
+            </div>
+
+            <!-- Active User Session Profile -->
+            <div class="sidebar-user" style="border-bottom-color: #065F46;">
+                <div class="user-avatar" id="college-user-avatar" style="background:#059669;">CA</div>
+                <div class="user-info">
+                    <p class="user-name" id="college-user-name">admin@collegea.edu</p>
+                    <div class="user-role-badge" style="color:#A7F3D0;">
+                        <span class="health-dot online" style="width:6px; height:6px;"></span>
+                        <span id="college-user-role">College Administrator</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role / Account Switcher -->
+            <div class="sidebar-college-selector" style="background: rgba(6, 78, 59, 0.6); border-bottom-color: #065F46;">
+                <label for="college-role-selector" style="color:#A7F3D0;">Switch Portal Identity</label>
+                <select id="college-role-selector" class="college-select-input" onchange="handleCollegeRoleChange(this.value)">
+                    <option value="COLLEGE_ADMIN" selected>👨‍💼 College A Administrator</option>
+                    <option value="STUDENT_ALICE">👩‍🎓 Alice Johnson (STU-2023-001)</option>
+                    <option value="ACTIVATE_ACCOUNT">🔑 Activate Student Account...</option>
+                </select>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <!-- Admin Navigation Group -->
+                <div id="nav-group-admin">
+                    <p class="nav-section-title" style="color:#6EE7B7;">Registrar Modules</p>
+
+                    <button class="sidebar-nav-item active" id="nav-col-admin-dash" onclick="switchCollegeSection('admin-dash')">
+                        <span>📊</span>
+                        <span>Registrar Overview</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-csv" onclick="switchCollegeSection('csv')">
+                        <span>📥</span>
+                        <span>Student CSV Onboarding</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-students" onclick="switchCollegeSection('students')">
+                        <span>📚</span>
+                        <span>Enrolled Student Directory</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-monitor" onclick="switchCollegeSection('monitor')">
+                        <span>📡</span>
+                        <span>Inbound P2P Monitor</span>
+                    </button>
+                </div>
+
+                <!-- Student Navigation Group -->
+                <div id="nav-group-student" style="display:none;">
+                    <p class="nav-section-title" style="color:#6EE7B7;">Student Self-Service</p>
+
+                    <button class="sidebar-nav-item" id="nav-col-student-profile" onclick="switchCollegeSection('student-profile')">
+                        <span>🎓</span>
+                        <span>My Academic Record</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-student-pending" onclick="switchCollegeSection('student-pending')">
+                        <span>⏳</span>
+                        <span>Pending Consent Requests</span>
+                        <span class="sidebar-nav-badge" id="student-pending-badge" style="background:#EF4444; display:none;">0</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-student-history" onclick="switchCollegeSection('student-history')">
+                        <span>📜</span>
+                        <span>Consent History & Revoke</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Bottom Environment Status -->
+            <div style="padding: 0.85rem 1rem; border-top: 1px solid #065F46; font-size: 0.72rem; color: #A7F3D0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>College Port: <strong>8081</strong></span>
+                    <span class="badge badge-active" style="font-size:0.6rem;">Isolated DB :5433</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =============================================================== -->
+        <!-- MAIN CONTENT AREA                                               -->
+        <!-- =============================================================== -->
+        <div class="main-content-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <span class="badge badge-active" style="font-size:0.75rem;">COLLEGE A DATA PROVIDER</span>
+                    <h3 id="top-bar-page-title">College A University Portal</h3>
+                </div>
+
+                <div class="top-bar-right">
+                    <!-- Live Service Health Indicators -->
+                    <div class="service-health-group">
+                        <div class="health-node" title="College A Backend">
+                            <span class="health-dot online" id="dot-col-a"></span>
+                            <span>College A :8081</span>
+                        </div>
+                        <span style="color:#CBD5E1">|</span>
+                        <div class="health-node" title="Consent Manager">
+                            <span class="health-dot online" id="dot-cm"></span>
+                            <span>CM :8095</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="pingAllServices()">🔄 Ping</button>
+                    <button class="btn btn-primary btn-sm" onclick="openActivationModal()">🔑 Activate Token</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleCollegeLogout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Main Page Content Body -->
+            <main class="page-content">
+
+                <!-- =========================================================== -->
+                <!-- SECTION 1: ADMIN REGISTRAR DASHBOARD                        -->
+                <!-- =========================================================== -->
+                <div id="section-col-admin-dash" class="col-page-section">
+                    <div class="banner" style="background: linear-gradient(135deg, #065F46, #047857);">
+                        <div class="banner-content">
+                            <span class="badge badge-info" style="background:rgba(255,255,255,0.2); color:#FFF;">ACADEMIC PROVIDER NODE</span>
+                            <h2 class="banner-title" style="margin-top:0.4rem;">College A Academic Registrar</h2>
+                            <p class="banner-subtitle">
+                                Authoritative custodian of official student academic dossiers. Provides cryptographic data exchange with other institutions
+                                strictly upon receipt of student-authorized RS256 Access Tokens from the Consent Manager.
+                            </p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Enrolled Students</p>
+                                <p class="banner-stat-value" id="stat-banner-students" style="color:#34D399;">--</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Federation Status</p>
+                                <p class="banner-stat-value" style="color:#6EE7B7; font-size:1.1rem;">CONNECTED</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 Stats Cards -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(16, 185, 129, 0.1); color:#059669;">📚</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Enrolled Students</p>
+                                <p class="stat-number" id="stat-col-students-count">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(59, 130, 246, 0.1); color:#2563EB;">🔐</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Active Credentials</p>
+                                <p class="stat-number" style="color:var(--emerald-text);">Verified</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(99, 102, 241, 0.1); color:#4F46E5;">🏛️</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Provider Inbound Mode</p>
+                                <p class="stat-number" style="font-size:1.15rem; color:var(--primary);">P2P Encrypted</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Cards Grid -->
+                    <div class="grid-2" style="margin-top:1.5rem;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📥 Student CSV Onboarding</h3>
+                                    <p>Provision student records directly into College A's database</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="switchCollegeSection('csv')">Open CSV Uploader →</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    Upload batches of student records directly to College A's backend (Port 8081).
+                                    Secure, single-use account activation tokens are automatically minted for each student.
+                                    The Consent Manager never receives student passwords or academic records.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📚 Student Academic Registry</h3>
+                                    <p>Browse student dossiers, transcripts, and credentials</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="switchCollegeSection('students')">View Directory →</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    Inspect official academic credentials stored locally in College A's PostgreSQL database:
+                                    Cumulative GPA, Course Transcripts, Degree Certificates, and Attendance records.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 2: CSV ONBOARDING (College Admin)                   -->
+                <!-- =========================================================== -->
+                <div id="section-col-csv" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📥 Bulk Student CSV Onboarding</h3>
+                                <p>Upload student roster directly to College A backend (never touches Consent Manager)</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-md); padding:1rem; margin-bottom:1.5rem;">
+                                <p style="font-size:0.85rem; color:#166534; font-weight:600;">📋 Expected CSV Format:</p>
+                                <code style="display:block; background:#DCFCE7; padding:0.5rem; margin-top:0.4rem; border-radius:4px; font-size:0.78rem;">
+                                    studentId,name,email,department,yearOfStudy,cgpa,transcript,degreeCertificate<br>
+                                    STU-2023-001,Alice Johnson,alice.johnson@collegea.edu,Computer Science,4,8.84,Official Transcript,B.Tech in CSE
+                                </code>
+                            </div>
+
+                            <form id="form-csv-upload" onsubmit="handleCsvUploadSubmit(event)">
+                                <div class="form-group">
+                                    <label for="csv-file-input">Select Student Roster (.csv file)</label>
+                                    <input type="file" id="csv-file-input" accept=".csv" class="form-control" required>
+                                </div>
+
+                                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                                    <button type="submit" class="btn btn-primary" id="btn-upload-csv">📤 Upload & Provision Students</button>
+                                </div>
+                            </form>
+
+                            <!-- CSV Upload Results Container -->
+                            <div id="csv-results-container" style="display:none; margin-top:1.5rem;">
+                                <hr style="border:none; border-top:1px solid #E5E7EB; margin-bottom:1rem;">
+                                <h4>✅ Onboarding Summary</h4>
+                                <div class="grid-2" style="margin-top:0.5rem;">
+                                    <div><p class="cert-item-label">Total Records Received</p><p class="cert-item-value" id="csv-total-count">0</p></div>
+                                    <div><p class="cert-item-label">Successfully Imported</p><p class="cert-item-value" id="csv-imported-count" style="color:var(--emerald-text);">0</p></div>
+                                    <div><p class="cert-item-label">Skipped / Duplicates</p><p class="cert-item-value" id="csv-skipped-count" style="color:var(--amber-text);">0</p></div>
+                                </div>
+
+                                <h5 style="margin-top:1rem; font-size:0.9rem;">🔑 Generated Activation Tokens & Links:</h5>
+                                <div class="table-responsive" style="margin-top:0.5rem; max-height:220px; overflow-y:auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Student ID</th>
+                                                <th>Email</th>
+                                                <th>Activation Token</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="csv-tokens-tbody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 3: ENROLLED STUDENT DIRECTORY (College Admin)       -->
+                <!-- =========================================================== -->
+                <div id="section-col-students" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📚 Enrolled Student Registry (Local College A Database)</h3>
+                                <p>Authoritative local student records stored securely in PostgreSQL</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="loadCollegeStudentsList()">🔄 Refresh</button>
+                                <button class="btn btn-primary btn-sm" onclick="openAddStudentModal()">+ Add Single Student</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Full Name</th>
+                                        <th>Official Email</th>
+                                        <th>Department</th>
+                                        <th>Account Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="college-students-tbody">
+                                    <tr><td colspan="6" style="text-align:center;">Loading students...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 4: INBOUND P2P MONITOR (College Admin)              -->
+                <!-- =========================================================== -->
+                <div id="section-col-monitor" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📡 Provider Cryptographic Inbound Monitor</h3>
+                                <p>Trace of incoming peer-to-peer data inquiries and RS256 token validation events</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="clearCryptoConsole()">Clear Log</button>
+                        </div>
+                        <div class="card-body">
+                            <pre class="crypto-console" id="provider-crypto-log">// College A Provider Cryptographic Monitor initialized.
+// Listening on endpoint: POST /api/data/access/{grantId}
+// RS256 Public Key loaded from CM :8095
+// Ready for peer-to-peer Diffie-Hellman key exchanges.</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 5: STUDENT PROFILE & ACADEMIC DOSSIER (Student)     -->
+                <!-- =========================================================== -->
+                <div id="section-col-student-profile" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 id="student-profile-title">🎓 Student Academic Credentials</h3>
+                                <p>Official academic records verified and sealed by College A University</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadStudentProfile()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Student Overview Card -->
+                            <div class="grid-2" style="background:#F9FAFB; padding:1.25rem; border-radius:var(--radius-md); border:1px solid #E5E7EB; margin-bottom:1.5rem;">
+                                <div>
+                                    <p class="cert-item-label">Student Full Name</p>
+                                    <p class="cert-item-value" id="profile-name">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Student Identifier</p>
+                                    <p class="cert-item-value" id="profile-id" style="font-family:var(--font-mono);">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Official Email</p>
+                                    <p class="cert-item-value" id="profile-email">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Department / Program</p>
+                                    <p class="cert-item-value" id="profile-dept">--</p>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Credentials Grid -->
+                            <h4 style="font-size:1rem; margin-bottom:0.75rem;">Official Academic Credentials:</h4>
+                            <div class="grid-2">
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Cumulative GPA (CGPA)</p>
+                                    <p class="cert-item-value" id="profile-cgpa" style="color:var(--emerald-text);">--</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Degree Certificate</p>
+                                    <p class="cert-item-value" id="profile-degree">--</p>
+                                </div>
+                                <div class="cert-item" style="grid-column: span 2;">
+                                    <p class="cert-item-label">Official Transcript</p>
+                                    <p class="cert-item-value" id="profile-transcript" style="font-size:0.85rem;">--</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Attendance Record</p>
+                                    <p class="cert-item-value" id="profile-attendance" style="color:var(--cyan-text);">89.5% Qualified</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Conduct Certificate</p>
+                                    <p class="cert-item-value">Exemplary - No Disciplinary Records</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 6: PENDING CONSENT REQUESTS (Student)               -->
+                <!-- =========================================================== -->
+                <div id="section-col-student-pending" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>⏳ Inbound Consent Inquiries</h3>
+                                <p>Third-party institutions requesting access to your academic records</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadStudentPendingConsents()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="student-pending-container">
+                                <p style="text-align:center; color:#6B7280; padding:2rem;">Checking for pending consent inquiries...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 7: CONSENT HISTORY & REVOCATION (Student)           -->
+                <!-- =========================================================== -->
+                <div id="section-col-student-history" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📜 Consent Decision History & Active Grants</h3>
+                                <p>Review granted permissions and revoke access in real-time</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadStudentConsentHistory()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Consent ID</th>
+                                        <th>Requesting Institution</th>
+                                        <th>Purpose</th>
+                                        <th>Authorized Fields</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-history-tbody">
+                                    <tr><td colspan="6" style="text-align:center;">Loading consent history...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODALS                                                              -->
+    <!-- =================================================================== -->
+
+    <!-- Modal: Student Account Activation -->
+    <div class="modal-overlay" id="modal-student-activation">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="card-header">
+                <div>
+                    <h3>🔑 Activate Student Account</h3>
+                    <p>Enter your single-use token from the registrar to set your password</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-student-activation')">✕</button>
+            </div>
+            <div class="card-body">
+                <!-- Step 1: Token Verification -->
+                <div id="activation-step-1">
+                    <form id="form-validate-token" onsubmit="handleValidateTokenSubmit(event)">
+                        <div class="form-group">
+                            <label for="act-token-input">Activation Token</label>
+                            <input type="text" id="act-token-input" class="form-control" placeholder="Paste 64-char activation token" required>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                            <button type="button" class="btn btn-secondary" onclick="closeModal('modal-student-activation')">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btn-validate-token">Verify Token →</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Password Setup -->
+                <div id="activation-step-2" style="display:none;">
+                    <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-md); padding:0.75rem; margin-bottom:1rem;">
+                        <p style="font-size:0.85rem; color:#1E40AF;"><strong>Identified Student:</strong> <span id="act-student-name">--</span> (<span id="act-student-id">--</span>)</p>
+                    </div>
+
+                    <form id="form-setup-password" onsubmit="handleSetupPasswordSubmit(event)">
+                        <div class="form-group">
+                            <label for="act-new-password">Create New Password</label>
+                            <input type="password" id="act-new-password" class="form-control" placeholder="Minimum 8 characters" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="act-confirm-password">Confirm Password</label>
+                            <input type="password" id="act-confirm-password" class="form-control" placeholder="Re-enter password" required>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                            <button type="button" class="btn btn-secondary" onclick="closeModal('modal-student-activation')">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btn-setup-password">Complete Activation & Log In</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: View Student Academic Dossier -->
+    <div class="modal-overlay" id="modal-student-dossier">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="card-header">
+                <div>
+                    <h3 id="dossier-student-name">Alice Johnson</h3>
+                    <p id="dossier-student-id">Student ID: STU-2023-001</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-student-dossier')">✕</button>
+            </div>
+            <div class="card-body">
+                <div class="grid-2" style="margin-bottom: 1rem;">
+                    <div class="cert-item">
+                        <p class="cert-item-label">Cumulative GPA</p>
+                        <p class="cert-item-value" id="dossier-cgpa" style="color:var(--emerald-text);">--</p>
+                    </div>
+                    <div class="cert-item">
+                        <p class="cert-item-label">Attendance Record</p>
+                        <p class="cert-item-value" style="color:var(--cyan-text);">89.5% Qualified</p>
+                    </div>
+                    <div class="cert-item" style="grid-column: span 2;">
+                        <p class="cert-item-label">Degree Certificate</p>
+                        <p class="cert-item-value" id="dossier-degree">--</p>
+                    </div>
+                    <div class="cert-item" style="grid-column: span 2;">
+                        <p class="cert-item-label">Academic Transcript</p>
+                        <p class="cert-item-value" id="dossier-transcript" style="font-size:0.85rem;">--</p>
+                    </div>
+                </div>
+                <div class="cert-notice">
+                    <span>🛡️</span>
+                    <div>Authoritative record in College A PostgreSQL database. Dispatched to other institutions strictly with student-approved RS256 token.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Student -->
+    <div class="modal-overlay" id="modal-add-student">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="card-header">
+                <div>
+                    <h3>Enroll New Student</h3>
+                    <p>Add student record to College A local registry</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-add-student')">✕</button>
+            </div>
+            <div class="card-body">
+                <form id="form-add-student" onsubmit="handleAddStudentSubmit(event)">
+                    <div class="form-group">
+                        <label for="add-stu-id">Student ID</label>
+                        <input type="text" id="add-stu-id" class="form-control" placeholder="e.g. STU-2023-005" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-stu-name">Full Name</label>
+                        <input type="text" id="add-stu-name" class="form-control" placeholder="e.g. Charlie Brown" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-stu-email">Official Email</label>
+                        <input type="email" id="add-stu-email" class="form-control" placeholder="e.g. charlie@collegea.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-stu-dept">Department</label>
+                        <input type="text" id="add-stu-dept" class="form-control" placeholder="e.g. Computer Science" value="Computer Science" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-stu-cgpa">Cumulative GPA</label>
+                        <input type="text" id="add-stu-cgpa" class="form-control" placeholder="e.g. 9.10" value="9.10">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-student')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Enroll Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # SERVER 1: CONSENT MANAGER (Central Control Plane & RS256 Trust Center)
+  # ============================================================================
+  server1-cm-db:
+    image: postgres:15-alpine
+    container_name: depa-cm-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: consent_manager_db_fyp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - cm_db_data:/var/lib/postgresql/data
+
+  server1-cm:
+    build:
+      context: .
+      dockerfile: consent-manager/backend/Dockerfile
+    container_name: depa-server1-cm
+    restart: always
+    depends_on:
+      - server1-cm-db
+    ports:
+      - "8095:8095"
+    environment:
+      PORT: 8095
+      SPRING_DATASOURCE_URL: jdbc:postgresql://server1-cm-db:5432/consent_manager_db_fyp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      APP_JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+  # ============================================================================
+  # SERVER 2: COLLEGE A (Dual-Role Institution A)
+  # ============================================================================
+  server2-college-a-db:
+    image: postgres:15-alpine
+    container_name: depa-college-a-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: college_a_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+    volumes:
+      - col_a_db_data:/var/lib/postgresql/data
+
+  server2-college-a:
+    build:
+      context: .
+      dockerfile: college-a/backend/Dockerfile
+    container_name: depa-server2-college-a
+    restart: always
+    depends_on:
+      - server2-college-a-db
+      - server1-cm
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      APP_NAME: college-a-app
+      APP_COLLEGE_CODE: COLLEGE_A
+      APP_COLLEGE_NAME: "College A University"
+      APP_CM_BASE_URL: "http://server1-cm:8095"
+      APP_INTERNAL_API_KEY: "A-INTERNAL-SECRET-KEY"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://server2-college-a-db:5432/college_a_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+
+  # ============================================================================
+  # SERVER 3: COLLEGE B (Dual-Role Institution B - Identical Codebase)
+  # ============================================================================
+  server3-college-b-db:
+    image: postgres:15-alpine
+    container_name: depa-college-b-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: college_b_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+    volumes:
+      - col_b_db_data:/var/lib/postgresql/data
+
+  server3-college-b:
+    build:
+      context: .
+      dockerfile: college-b/backend/Dockerfile
+    container_name: depa-server3-college-b
+    restart: always
+    depends_on:
+      - server3-college-b-db
+      - server1-cm
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      APP_NAME: college-b-app
+      APP_COLLEGE_CODE: COLLEGE_B
+      APP_COLLEGE_NAME: "College B University"
+      APP_CM_BASE_URL: "http://server1-cm:8095"
+      APP_INTERNAL_API_KEY: "B-INTERNAL-SECRET-KEY"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://server3-college-b-db:5432/college_b_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+
+volumes:
+  cm_db_data:
+  col_a_db_data:
+  col_b_db_data:

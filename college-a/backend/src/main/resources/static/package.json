@@ -1,0 +1,13 @@
+{
+  "name": "depa-consent-manager-ui",
+  "version": "1.0.0",
+  "description": "DEPA Electronic Consent Manager & Dual-Role College Portal Frontend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["depa", "consent-manager", "higher-education", "data-protection"],
+  "author": "FYP Project Team",
+  "license": "MIT"
+}

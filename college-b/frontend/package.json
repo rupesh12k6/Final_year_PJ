@@ -1,0 +1,13 @@
+{
+  "name": "college-b-frontend",
+  "version": "1.0.0",
+  "description": "Standalone Frontend for College B Academic Portal (Port 3003)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["college-b", "academic-portal", "frontend"],
+  "author": "DEPA Engineering Team",
+  "license": "MIT"
+}

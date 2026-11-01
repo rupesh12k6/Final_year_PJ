@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Admin Sign In — DEPA Consent Manager</title>
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS (Vendor Local) -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11.3 (Vendor Local) -->
+    <link href="vendor/css/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DriveFlow Theme CSS (Consent Manager Fiduciary Blue) -->
+    <link href="css/driveflow-theme.css" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body style="background-color: #0B0F19; margin: 0; padding: 0;">
+    <div id="login-root"></div>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+    <script src="config.js"></script>
+    <script src="js/ui-components.js"></script>
+    <script src="js/services/api.js"></script>
+    <script src="js/auth/session.js"></script>
+    <script src="js/auth/auth-controller.js"></script>
+    <script src="js/pages/login-org-admin.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // If already authenticated as Org Admin, redirect to dashboard
+            if (window.DF_SESSION.isAuthenticated() && window.DF_SESSION.isOrgAdmin()) {
+                window.location.href = 'index.html#/org-dashboard';
+                return;
+            }
+
+            const root = document.getElementById('login-root');
+            window.DF_PAGE_LOGIN_ORG_ADMIN.render(root);
+
+            // Configure switch link to navigate to super-admin-login.html directly
+            const switchLink = document.getElementById('link-to-super-admin');
+            if (switchLink) {
+                switchLink.setAttribute('href', 'super-admin-login.html');
+            }
+        });
+    </script>
+</body>
+</html>
+

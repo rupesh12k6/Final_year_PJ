@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPA Consent Manager | Regulatory Fiduciary Portal</title>
+    <meta name="description" content="Central regulatory fiduciary and consent management service under the India Data Empowerment and Protection Architecture.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- =============================================================== -->
+        <!-- LEFT SIDEBAR                                                    -->
+        <!-- =============================================================== -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">🏛️</div>
+                <div class="sidebar-brand-text">
+                    <p>INDIA DEPA FIDUCIARY</p>
+                    <h2>Consent Manager</h2>
+                </div>
+            </div>
+
+            <!-- Active User Session Profile -->
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-user-avatar">SA</div>
+                <div class="user-info">
+                    <p class="user-name" id="sidebar-user-name">superadmin@depa.cm</p>
+                    <div class="user-role-badge">
+                        <span class="health-dot online" style="width:6px; height:6px;"></span>
+                        <span id="sidebar-user-role">Super Admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role / Account Switcher for Demo & Admin Testing -->
+            <div class="sidebar-college-selector">
+                <label for="cm-role-selector">Switch Governance Role</label>
+                <select id="cm-role-selector" class="college-select-input" onchange="handleCmRoleChange(this.value)">
+                    <option value="SUPER_ADMIN" selected>🛡️ Super Admin (CM Central)</option>
+                    <option value="ORG_ADMIN_COLLEGE_A">🎓 College A Org Admin</option>
+                    <option value="ORG_ADMIN_COLLEGE_B">🏛️ College B Org Admin</option>
+                </select>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <p class="nav-section-title" id="sidebar-section-title-core">Governance & Registry</p>
+
+                <!-- Super Admin Views -->
+                <button class="sidebar-nav-item active" id="nav-cm-dashboard" onclick="switchCmSection('dashboard')">
+                    <span>📊</span>
+                    <span>Federation Overview</span>
+                </button>
+
+                <button class="sidebar-nav-item" id="nav-cm-orgs" onclick="switchCmSection('orgs')">
+                    <span>🏛️</span>
+                    <span>Registered Institutions</span>
+                </button>
+
+                <button class="sidebar-nav-item" id="nav-cm-admins" onclick="switchCmSection('admins')">
+                    <span>👥</span>
+                    <span>Organization Admins</span>
+                </button>
+
+                <!-- Org Admin Views -->
+                <button class="sidebar-nav-item" id="nav-cm-org-profile" onclick="switchCmSection('org-profile')" style="display:none;">
+                    <span>🏢</span>
+                    <span>Institution Profile</span>
+                </button>
+
+                <button class="sidebar-nav-item" id="nav-cm-org-users" onclick="switchCmSection('org-users')" style="display:none;">
+                    <span>👤</span>
+                    <span>Authorized Staff</span>
+                </button>
+
+                <button class="sidebar-nav-item" id="nav-cm-org-consents" onclick="switchCmSection('org-consents')" style="display:none;">
+                    <span>📜</span>
+                    <span>Institution Consents</span>
+                </button>
+
+                <!-- Shared Views -->
+                <p class="nav-section-title" id="sidebar-section-title-gov">Cryptographic Trust & Audit</p>
+
+                <button class="sidebar-nav-item" id="nav-cm-audit" onclick="switchCmSection('audit')">
+                    <span>📑</span>
+                    <span>Security Audit Logs</span>
+                </button>
+
+                <button class="sidebar-nav-item" id="nav-cm-trust" onclick="switchCmSection('trust')">
+                    <span>🔑</span>
+                    <span>RS256 Trust Center</span>
+                </button>
+            </nav>
+
+            <!-- Bottom Environment Status -->
+            <div style="padding: 0.85rem 1rem; border-top: 1px solid var(--sidebar-border); font-size: 0.72rem; color: #64748B;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>CM Port: <strong>8095</strong></span>
+                    <span class="badge badge-cyan" style="font-size:0.6rem;">Fiduciary Blind</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =============================================================== -->
+        <!-- MAIN CONTENT AREA                                               -->
+        <!-- =============================================================== -->
+        <div class="main-content-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <span class="badge badge-info" style="font-size:0.75rem;">DEPA REGULATORY NODE</span>
+                    <h3 id="top-bar-page-title">Consent Manager Governance Dashboard</h3>
+                </div>
+
+                <div class="top-bar-right">
+                    <!-- Live Service Health Indicators -->
+                    <div class="service-health-group">
+                        <div class="health-node" title="Consent Manager API">
+                            <span class="health-dot online" id="dot-cm"></span>
+                            <span>CM :8095</span>
+                        </div>
+                        <span style="color:#CBD5E1">|</span>
+                        <div class="health-node" title="College A Provider API">
+                            <span class="health-dot online" id="dot-col-a"></span>
+                            <span>College A :8081</span>
+                        </div>
+                        <span style="color:#CBD5E1">|</span>
+                        <div class="health-node" title="College B Consumer API">
+                            <span class="health-dot online" id="dot-col-b"></span>
+                            <span>College B :8082</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="pingAllServices()">🔄 Ping</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Main Page Content Body -->
+            <main class="page-content">
+
+                <!-- =========================================================== -->
+                <!-- SECTION 1: SUPER ADMIN DASHBOARD / FEDERATION OVERVIEW       -->
+                <!-- =========================================================== -->
+                <div id="section-cm-dashboard" class="cm-page-section">
+                    <!-- Top Summary Banner -->
+                    <div class="banner">
+                        <div class="banner-content">
+                            <span class="badge badge-active">REGULATORY STATUS: ACTIVE FIDUCIARY</span>
+                            <h2 class="banner-title" style="margin-top:0.4rem;">DEPA Consent Manager Central Registry</h2>
+                            <p class="banner-subtitle">
+                                Cryptographic regulatory authority managing student data sovereignty, RS256 token issuance, and institutional public keys.
+                                <strong>100% Data Blind</strong>: Academic records transfer strictly peer-to-peer between colleges.
+                            </p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Active HEIs</p>
+                                <p class="banner-stat-value" id="banner-active-institutions" style="color:#38BDF8;">--</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Active Consents</p>
+                                <p class="banner-stat-value" id="banner-active-grants" style="color:#34D399;">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 Live System Metric Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(59, 130, 246, 0.1); color:#2563EB;">🏛️</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Registered HEIs</p>
+                                <p class="stat-number" id="stat-orgs-count">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(245, 158, 11, 0.1); color:#D97706;">⏳</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Pending Inquiries</p>
+                                <p class="stat-number" id="stat-pending-count" style="color:var(--amber-text);">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(16, 185, 129, 0.1); color:#059669;">🛡️</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Active Consents</p>
+                                <p class="stat-number" id="stat-active-count" style="color:var(--emerald-text);">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(239, 68, 68, 0.1); color:#DC2626;">🚫</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Revoked Consents</p>
+                                <p class="stat-number" id="stat-revoked-count" style="color:var(--rose-text);">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Cards Grid -->
+                    <div class="grid-2" style="margin-top: 1.5rem;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>🏛️ Institution Federation Controls</h3>
+                                    <p>Onboard and govern colleges and academic institutions</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="openRegisterOrgModal()">+ Register HEI</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    Institutions operate as <strong>Providers</strong> (hosting student academic dossiers) or <strong>Consumers</strong> (initiating credential requests).
+                                    Each HEI registers an RS256 assertion public key for authenticating student consent decisions.
+                                </p>
+                                <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                                    <button class="btn btn-secondary btn-sm" onclick="switchCmSection('orgs')">Manage Organizations →</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="switchCmSection('admins')">Manage Org Admins →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>🔐 RS256 Cryptographic Architecture</h3>
+                                    <p>Fiduciary signing authority and trust anchors</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="switchCmSection('trust')">View Key →</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    Upon student approval via short-lived assertion, the Consent Manager mints a cryptographically signed RS256 Access JWT containing approved canonical scopes.
+                                    Colleges independently verify tokens without exposing cleartext academic records to CM.
+                                </p>
+                                <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                                    <span class="badge badge-active">RS256 SHA-256</span>
+                                    <span class="badge badge-info">Safe Rotation Overlap</span>
+                                    <span class="badge badge-cyan">Anti-Replay jti</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 2: REGISTERED ORGANIZATIONS (Super Admin)           -->
+                <!-- =========================================================== -->
+                <div id="section-cm-orgs" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>🏛️ Higher Education Institutions Registry</h3>
+                                <p>Manage active and suspended institutions in the DEPA Academic Federation</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="loadCmOrganizations()">🔄 Refresh</button>
+                                <button class="btn btn-primary btn-sm" onclick="openRegisterOrgModal()">+ Register New HEI</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Organization Code</th>
+                                        <th>Legal Name</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Key ID</th>
+                                        <th>Overlap Window</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cm-orgs-tbody">
+                                    <tr><td colspan="7" style="text-align:center;">Loading institutions...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 3: ORGANIZATION ADMINISTRATORS (Super Admin)        -->
+                <!-- =========================================================== -->
+                <div id="section-cm-admins" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>👥 Organization Administrators</h3>
+                                <p>Provision and govern institutional administrative accounts</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadCmOrganizations()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Institution</th>
+                                        <th>Admin Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cm-org-admins-tbody">
+                                    <tr><td colspan="5" style="text-align:center;">Loading administrators...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 4: INSTITUTION PROFILE (Org Admin)                  -->
+                <!-- =========================================================== -->
+                <div id="section-cm-org-profile" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>🏢 My Institution Information</h3>
+                                <p>Institution details, cryptographic keys, and federation status</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadCurrentOrgProfile()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-2">
+                                <div>
+                                    <p class="cert-item-label">Institution Code</p>
+                                    <p class="cert-item-value" id="profile-org-code">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Legal Name</p>
+                                    <p class="cert-item-value" id="profile-org-name">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Federation Status</p>
+                                    <p class="cert-item-value" id="profile-org-status">--</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Primary Contact Email</p>
+                                    <p class="cert-item-value" id="profile-org-email">--</p>
+                                </div>
+                                <div style="grid-column: span 2;">
+                                    <p class="cert-item-label">Assertion Public Key ID</p>
+                                    <p class="cert-item-value" id="profile-org-key-id" style="font-family:var(--font-mono);">--</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 5: AUTHORIZED STAFF (Org Admin)                     -->
+                <!-- =========================================================== -->
+                <div id="section-cm-org-users" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>👤 Authorized Organization Staff & Users</h3>
+                                <p>Manage institutional staff with access to the Consent Manager</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="loadOrgUsers()">🔄 Refresh</button>
+                                <button class="btn btn-primary btn-sm" onclick="openAddStaffUserModal()">+ Add Staff User</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="org-users-tbody">
+                                    <tr><td colspan="5" style="text-align:center;">Loading staff...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 6: INSTITUTION CONSENTS (Org Admin)                 -->
+                <!-- =========================================================== -->
+                <div id="section-cm-org-consents" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📜 Institutional Consent Activity</h3>
+                                <p>Consents and data transfers involving your institution</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadOrgConsents()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Consent ID</th>
+                                        <th>Student ID</th>
+                                        <th>Requester Organization</th>
+                                        <th>Approved Scope</th>
+                                        <th>Status</th>
+                                        <th>Created Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="org-consents-tbody">
+                                    <tr><td colspan="6" style="text-align:center;">Loading consents...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 7: SECURITY AUDIT LOGS (Super Admin & Org Admin)    -->
+                <!-- =========================================================== -->
+                <div id="section-cm-audit" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📑 Cryptographic & Fiduciary Audit Logs</h3>
+                                <p>Immutable audit trail of consent requests, assertions, tokens, and governance actions</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <select id="audit-filter-action" class="form-control" style="width: auto;" onchange="filterAuditLogs()">
+                                    <option value="ALL">All Event Types</option>
+                                    <option value="CONSENT">Consent Lifecycle</option>
+                                    <option value="ASSERTION">Student Assertions</option>
+                                    <option value="TOKEN">Token Issuance</option>
+                                    <option value="KEY">Key Rotation</option>
+                                    <option value="ADMIN">Governance Actions</option>
+                                </select>
+                                <button class="btn btn-secondary btn-sm" onclick="loadCmAuditLogs()">🔄 Refresh</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Event Category</th>
+                                        <th>Actor ID</th>
+                                        <th>Actor Role</th>
+                                        <th>Resource ID</th>
+                                        <th>Institution</th>
+                                        <th>Event Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cm-audit-tbody">
+                                    <tr><td colspan="7" style="text-align:center;">Loading audit events...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 8: RS256 TRUST CENTER                               -->
+                <!-- =========================================================== -->
+                <div id="section-cm-trust" class="cm-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>🔑 Consent Manager RS256 Trust Center</h3>
+                                <p>Cryptographic public key for Access JWT verification across the DEPA network</p>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="copyCmPublicKey()">📋 Copy Public Key</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-2" style="margin-bottom:1rem;">
+                                <div>
+                                    <p class="cert-item-label">Algorithm</p>
+                                    <p class="cert-item-value" style="color:var(--primary);">RS256 (RSA 2048-bit with SHA-256)</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Issuer Claim (iss)</p>
+                                    <p class="cert-item-value">DEPA_CONSENT_MANAGER</p>
+                                </div>
+                            </div>
+                            <p class="cert-item-label">Active RS256 Public Key (X.509 PEM)</p>
+                            <pre class="crypto-console" id="cm-public-key-pem" style="max-height: 250px;">Loading public key...</pre>
+                            <p style="font-size:0.78rem; color:#6B7280; margin-top:0.5rem;">
+                                Note: College A dynamically caches this public key to cryptographically verify Access JWTs presented by College B during direct peer-to-peer data transfers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODALS                                                              -->
+    <!-- =================================================================== -->
+
+    <!-- Modal: Register New Organization -->
+    <div class="modal-overlay" id="modal-register-org">
+        <div class="modal-content" style="max-width: 520px;">
+            <div class="card-header">
+                <div>
+                    <h3>🏛️ Register New Institution</h3>
+                    <p>Onboard an academic institution into the federation</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-register-org')">✕</button>
+            </div>
+            <div class="card-body">
+                <form id="form-register-org" onsubmit="handleRegisterOrgSubmit(event)">
+                    <div class="form-group">
+                        <label for="reg-org-code">Organization Code (Upper Case)</label>
+                        <input type="text" id="reg-org-code" class="form-control" placeholder="e.g. COLLEGE_C" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-org-name">Legal Institution Name</label>
+                        <input type="text" id="reg-org-name" class="form-control" placeholder="e.g. National Institute of Technology" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-org-email">Official Registrar Email</label>
+                        <input type="email" id="reg-org-email" class="form-control" placeholder="e.g. registrar@nit.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-org-type">Institution Role</label>
+                        <select id="reg-org-type" class="form-control">
+                            <option value="DUAL_ROLE">Dual-Role (Provider & Consumer)</option>
+                            <option value="PROVIDER">Provider Only (Custody of Records)</option>
+                            <option value="CONSUMER">Consumer Only (Data Inquirer)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-org-url">Base Service URL</label>
+                        <input type="url" id="reg-org-url" class="form-control" placeholder="e.g. http://localhost:8083" value="http://localhost:8083" required>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.25rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-register-org')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-register-org">Register Institution</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Org Admin -->
+    <div class="modal-overlay" id="modal-create-org-admin">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="card-header">
+                <div>
+                    <h3 id="create-admin-modal-title">Provision Organization Admin</h3>
+                    <p id="create-admin-modal-sub">Create institutional administrator account</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-create-org-admin')">✕</button>
+            </div>
+            <div class="card-body">
+                <form id="form-create-org-admin" onsubmit="handleCreateOrgAdminSubmit(event)">
+                    <input type="hidden" id="admin-target-org-id">
+                    <div class="form-group">
+                        <label for="admin-email">Administrator Email</label>
+                        <input type="email" id="admin-email" class="form-control" placeholder="e.g. admin@college.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-fullname">Full Name</label>
+                        <input type="text" id="admin-fullname" class="form-control" placeholder="e.g. Dr. Jane Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Initial Password</label>
+                        <input type="password" id="admin-password" class="form-control" placeholder="At least 8 characters" required>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.25rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-org-admin')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Admin</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Staff User (Org Admin) -->
+    <div class="modal-overlay" id="modal-add-staff-user">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="card-header">
+                <div>
+                    <h3>Add Organization Staff User</h3>
+                    <p>Provision staff account for this organization</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-add-staff-user')">✕</button>
+            </div>
+            <div class="card-body">
+                <form id="form-add-staff-user" onsubmit="handleAddStaffUserSubmit(event)">
+                    <div class="form-group">
+                        <label for="staff-email">Staff Email</label>
+                        <input type="email" id="staff-email" class="form-control" placeholder="e.g. staff@college.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-name">Full Name</label>
+                        <input type="text" id="staff-name" class="form-control" placeholder="e.g. Registrar Officer" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="staff-password">Initial Password</label>
+                        <input type="password" id="staff-password" class="form-control" placeholder="At least 8 characters" required>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.25rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-staff-user')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Staff User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reset Password -->
+    <div class="modal-overlay" id="modal-reset-password">
+        <div class="modal-content" style="max-width: 440px;">
+            <div class="card-header">
+                <div>
+                    <h3>Force Password Reset</h3>
+                    <p id="reset-password-user-label">Reset user password</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-reset-password')">✕</button>
+            </div>
+            <div class="card-body">
+                <form id="form-reset-password" onsubmit="handleResetPasswordSubmit(event)">
+                    <input type="hidden" id="reset-password-user-id">
+                    <div class="form-group">
+                        <label for="reset-new-password">New Password</label>
+                        <input type="password" id="reset-new-password" class="form-control" placeholder="Minimum 8 characters" required>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.25rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-reset-password')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

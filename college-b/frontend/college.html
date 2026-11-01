@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College B University | Consumer Inquirer & Academic Portal</title>
+    <meta name="description" content="College B University Academic Portal. Independent Data Consumer node in the DEPA Academic Trust Network.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- =============================================================== -->
+        <!-- LEFT SIDEBAR                                                    -->
+        <!-- =============================================================== -->
+        <aside class="app-sidebar" style="background-color: #1E1B4B; border-right-color: #312E81;">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo" style="background: linear-gradient(135deg, #6366F1, #4F46E5);">🏛️</div>
+                <div class="sidebar-brand-text">
+                    <p style="color:#A5B4FC;">DATA CONSUMER NODE</p>
+                    <h2 id="sidebar-portal-name">College B University</h2>
+                </div>
+            </div>
+
+            <!-- Active User Session Profile -->
+            <div class="sidebar-user" style="border-bottom-color: #312E81;">
+                <div class="user-avatar" id="college-user-avatar" style="background:#4F46E5;">CB</div>
+                <div class="user-info">
+                    <p class="user-name" id="college-user-name">admin@collegeb.edu</p>
+                    <div class="user-role-badge" style="color:#C7D2FE;">
+                        <span class="health-dot online" style="width:6px; height:6px;"></span>
+                        <span id="college-user-role">Consumer Inquirer Officer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role / Account Switcher -->
+            <div class="sidebar-college-selector" style="background: rgba(30, 27, 75, 0.6); border-bottom-color: #312E81;">
+                <label for="college-role-selector" style="color:#C7D2FE;">Switch Portal Identity</label>
+                <select id="college-role-selector" class="college-select-input" onchange="handleCollegeRoleChange(this.value)">
+                    <option value="COLLEGE_ADMIN" selected>👨‍💼 College B Consumer Officer</option>
+                    <option value="STUDENT_BOB">👨‍🎓 Bob Smith (STU-2023-002)</option>
+                </select>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <!-- Consumer Officer Navigation -->
+                <div id="nav-group-admin">
+                    <p class="nav-section-title" style="color:#A5B4FC;">Consumer Operations</p>
+
+                    <button class="sidebar-nav-item active" id="nav-col-dash" onclick="switchCollegeSection('dash')">
+                        <span>📊</span>
+                        <span>Consumer Dashboard</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-inquiry" onclick="switchCollegeSection('inquiry')">
+                        <span>📝</span>
+                        <span>Initiate Data Request</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-tracker" onclick="switchCollegeSection('tracker')">
+                        <span>📬</span>
+                        <span>Outbound Request Tracker</span>
+                        <span class="sidebar-nav-badge" id="sidebar-approved-badge" style="background:#10B981; display:none;">0</span>
+                    </button>
+
+                    <button class="sidebar-nav-item" id="nav-col-viewdata" onclick="switchCollegeSection('viewdata')">
+                        <span>📜</span>
+                        <span>Retrieved Credentials</span>
+                    </button>
+
+                    <p class="nav-section-title" style="color:#A5B4FC;">Internal College Records</p>
+
+                    <button class="sidebar-nav-item" id="nav-col-students" onclick="switchCollegeSection('students')">
+                        <span>📚</span>
+                        <span>Local Student Registry</span>
+                    </button>
+                </div>
+
+                <!-- Student Navigation -->
+                <div id="nav-group-student" style="display:none;">
+                    <p class="nav-section-title" style="color:#A5B4FC;">Student Self-Service</p>
+
+                    <button class="sidebar-nav-item" id="nav-col-stu-profile" onclick="switchCollegeSection('stu-profile')">
+                        <span>🎓</span>
+                        <span>My Academic Record</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Bottom Environment Status -->
+            <div style="padding: 0.85rem 1rem; border-top: 1px solid #312E81; font-size: 0.72rem; color: #C7D2FE;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>College Port: <strong>8082</strong></span>
+                    <span class="badge badge-info" style="font-size:0.6rem;">Isolated DB :5434</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =============================================================== -->
+        <!-- MAIN CONTENT AREA                                               -->
+        <!-- =============================================================== -->
+        <div class="main-content-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <span class="badge badge-info" style="font-size:0.75rem;">COLLEGE B DATA CONSUMER</span>
+                    <h3 id="top-bar-page-title">College B University Consumer Portal</h3>
+                </div>
+
+                <div class="top-bar-right">
+                    <!-- Live Service Health Indicators -->
+                    <div class="service-health-group">
+                        <div class="health-node" title="College B Backend">
+                            <span class="health-dot online" id="dot-col-b"></span>
+                            <span>College B :8082</span>
+                        </div>
+                        <span style="color:#CBD5E1">|</span>
+                        <div class="health-node" title="Consent Manager">
+                            <span class="health-dot online" id="dot-cm"></span>
+                            <span>CM :8095</span>
+                        </div>
+                        <span style="color:#CBD5E1">|</span>
+                        <div class="health-node" title="College A Provider">
+                            <span class="health-dot online" id="dot-col-a"></span>
+                            <span>College A :8081</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="pingAllServices()">🔄 Ping</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleCollegeLogout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Main Page Content Body -->
+            <main class="page-content">
+
+                <!-- =========================================================== -->
+                <!-- SECTION 1: CONSUMER DASHBOARD                               -->
+                <!-- =========================================================== -->
+                <div id="section-col-dash" class="col-page-section">
+                    <div class="banner" style="background: linear-gradient(135deg, #3730A3, #4F46E5);">
+                        <div class="banner-content">
+                            <span class="badge badge-info" style="background:rgba(255,255,255,0.2); color:#FFF;">ACADEMIC CONSUMER NODE</span>
+                            <h2 class="banner-title" style="margin-top:0.4rem;">College B Admissions & Academic Verifier</h2>
+                            <p class="banner-subtitle">
+                                Initiates verifiable credential requests to provider universities under India's DEPA framework.
+                                Upon student consent, retrieves official records directly via peer-to-peer encrypted channels.
+                            </p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Outbound Inquiries</p>
+                                <p class="banner-stat-value" id="stat-banner-outbound" style="color:#38BDF8;">--</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-label">Retrieved Dossiers</p>
+                                <p class="banner-stat-value" id="stat-banner-retrieved" style="color:#34D399;">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 Stats Cards -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(79, 70, 229, 0.1); color:#4F46E5;">📤</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Submitted Inquiries</p>
+                                <p class="stat-number" id="stat-col-outbound-count">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(16, 185, 129, 0.1); color:#059669;">✓</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Approved & Ready</p>
+                                <p class="stat-number" id="stat-col-approved-count" style="color:var(--emerald-text);">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:rgba(6, 182, 212, 0.1); color:#0891B2;">📜</div>
+                            <div class="stat-details">
+                                <p class="stat-label">Fetched Records</p>
+                                <p class="stat-number" id="stat-col-received-count" style="color:var(--cyan-text);">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Cards Grid -->
+                    <div class="grid-2" style="margin-top:1.5rem;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📝 Request Student Academic Data</h3>
+                                    <p>Submit formal data request to College A via Consent Manager</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="switchCollegeSection('inquiry')">New Request →</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    College B initiates backend-to-backend data requests to the Consent Manager specifying target student, purpose, and canonical fields.
+                                    The student receives an alert in their home college portal to review and approve specific fields.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📬 Track Outbound Inquiries & Fetch</h3>
+                                    <p>Monitor status and execute direct peer-to-peer data retrieval</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="switchCollegeSection('tracker')">View Tracker →</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="font-size:0.88rem; color:#4B5563; line-height:1.6;">
+                                    Once approved by the student, College B backend retrieves the RS256 Access Token and executes peer-to-peer Diffie-Hellman encrypted transfer with College A.
+                                    Only student-approved fields are disclosed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 2: INITIATE DATA REQUEST FORM                       -->
+                <!-- =========================================================== -->
+                <div id="section-col-inquiry" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📝 Initiate Credential Verification Request</h3>
+                                <p>Submit formal inquiry to provider college through the Consent Manager</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="autofillDemoInquiry()">⚡ Fill Demo: Alice Johnson</button>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-data-inquiry" onsubmit="handleDataInquirySubmit(event)">
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label for="inq-student-id">Target Student Identifier</label>
+                                        <input type="text" id="inq-student-id" class="form-control" value="STU-2023-001" placeholder="e.g. STU-2023-001" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inq-provider-org">Provider Institution</label>
+                                        <select id="inq-provider-org" class="form-control" required>
+                                            <option value="COLLEGE_A" selected>College A University (Dual-Role HEI :8081)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inq-purpose">Explicit Purpose of Academic Inquiry</label>
+                                    <input type="text" id="inq-purpose" class="form-control" value="Master's Degree Academic Evaluation" placeholder="e.g. Master's Admissions Credential Verification" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                                        <label style="font-weight:700; margin:0;">Requested Canonical Academic Fields:</label>
+                                        <div style="display:flex; gap:0.4rem;">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAllInquiryFields(true)">Select All</button>
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAllInquiryFields(false)">Deselect All</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="scope-checkbox-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem;">
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-cgpa" value="CGPA" checked class="inq-field-cb">
+                                            <label for="inq-field-cgpa">
+                                                <strong>Cumulative GPA (CGPA)</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Overall performance score</p>
+                                            </label>
+                                        </div>
+
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-transcript" value="TRANSCRIPT" checked class="inq-field-cb">
+                                            <label for="inq-field-transcript">
+                                                <strong>Academic Transcript</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Semester breakdown & course grades</p>
+                                            </label>
+                                        </div>
+
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-degree" value="DEGREE_CERTIFICATE" checked class="inq-field-cb">
+                                            <label for="inq-field-degree">
+                                                <strong>Degree Certificate</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Graduation & credential award</p>
+                                            </label>
+                                        </div>
+
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-attendance" value="ATTENDANCE" checked class="inq-field-cb">
+                                            <label for="inq-field-attendance">
+                                                <strong>Attendance Record</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Attendance qualification percentage</p>
+                                            </label>
+                                        </div>
+
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-conduct" value="CONDUCT_CERTIFICATE" class="inq-field-cb">
+                                            <label for="inq-field-conduct">
+                                                <strong>Conduct Certificate</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Disciplinary & character verification</p>
+                                            </label>
+                                        </div>
+
+                                        <div class="scope-checkbox-item">
+                                            <input type="checkbox" id="inq-field-enrollment" value="ENROLLMENT_STATUS" class="inq-field-cb">
+                                            <label for="inq-field-enrollment">
+                                                <strong>Enrollment Status</strong>
+                                                <p style="font-size:0.75rem; color:#6B7280; margin:0;">Current registration status</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+                                    <button type="submit" class="btn btn-primary" id="btn-submit-inquiry">
+                                        📤 Transmit Request to Consent Manager
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 3: OUTBOUND REQUEST TRACKER & STATUS                -->
+                <!-- =========================================================== -->
+                <div id="section-col-tracker" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📬 Outbound Data Requests Tracker</h3>
+                                <p>Live status of credential inquiries sent to provider institutions</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadOutboundTracker()">🔄 Refresh Status</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Request ID</th>
+                                        <th>Target Student</th>
+                                        <th>Provider Institution</th>
+                                        <th>Purpose</th>
+                                        <th>Requested Scope</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="outbound-tracker-tbody">
+                                    <tr><td colspan="7" style="text-align:center;">Loading outbound requests...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 4: RETRIEVED CREDENTIALS VIEWER                     -->
+                <!-- =========================================================== -->
+                <div id="section-col-viewdata" class="col-page-section" style="display:none;">
+                    <div id="no-credentials-notice" class="card" style="text-align:center; padding:3rem 1rem;">
+                        <div style="font-size:2.5rem; margin-bottom:0.5rem;">📥</div>
+                        <h4 style="color:#111827;">No Academic Dossier Retrieved Yet</h4>
+                        <p style="color:#6B7280; font-size:0.88rem; margin-top:0.25rem;">
+                            Once a target student approves your request, click <strong>"Fetch Authorized Data"</strong> in the Outbound Request Tracker.
+                        </p>
+                        <div style="margin-top:1.25rem;">
+                            <button class="btn btn-primary btn-sm" onclick="switchCollegeSection('tracker')">Go to Request Tracker →</button>
+                        </div>
+                    </div>
+
+                    <!-- Credential Certificate Card -->
+                    <div id="received-credential-card" class="card" style="display:none; border:2px solid #E5E7EB; box-shadow:var(--shadow-lg);">
+                        <div class="card-header" style="background:#F9FAFB; border-bottom:2px solid #E5E7EB;">
+                            <div>
+                                <span class="badge badge-active" style="font-size:0.75rem;">OFFICIAL VERIFIED ACADEMIC DOSSIER</span>
+                                <h3 id="cert-issuing-college" style="margin-top:0.35rem; color:#111827;">COLLEGE A UNIVERSITY</h3>
+                                <p style="font-size:0.82rem; color:#4B5563;">Direct P2P Encrypted Academic Exchange · India DEPA Framework</p>
+                            </div>
+                            <div style="text-align:right;">
+                                <span class="badge badge-cyan" id="cert-grant-badge">RS256 TOKEN VALIDATED</span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Student Identity Banner -->
+                            <div class="grid-2" style="background:#EEF2FF; border:1px solid #C7D2FE; border-radius:var(--radius-md); padding:1rem; margin-bottom:1.5rem;">
+                                <div>
+                                    <p class="cert-item-label">Verified Student Name</p>
+                                    <p class="cert-item-value" id="cert-val-name">Alice Johnson</p>
+                                </div>
+                                <div>
+                                    <p class="cert-item-label">Authoritative Student ID</p>
+                                    <p class="cert-item-value" id="cert-val-id" style="font-family:var(--font-mono);">STU-2023-001</p>
+                                </div>
+                            </div>
+
+                            <!-- Granular Attributes Container -->
+                            <h4 style="font-size:0.95rem; margin-bottom:0.75rem; color:#111827;">Authorized Academic Attributes:</h4>
+                            <div class="grid-2" id="cert-attributes-grid" style="gap:1rem;">
+                                <!-- Dynamically populated based strictly on approved fields -->
+                            </div>
+
+                            <!-- Scope Enforcement Verification Notice -->
+                            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-md); padding:0.85rem; margin-top:1.5rem; font-size:0.8rem; color:#166534;">
+                                🛡️ <strong>DEPA Field-Level Sovereignty Verified:</strong>
+                                Provider College A returned strictly the attributes approved by the student. Any unapproved or withheld fields were filtered at the source and never transmitted over the wire.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 5: LOCAL STUDENT REGISTRY                           -->
+                <!-- =========================================================== -->
+                <div id="section-col-students" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📚 Local College B Enrolled Students</h3>
+                                <p>Students enrolled at College B University</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadLocalStudents()">🔄 Refresh</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Full Name</th>
+                                        <th>Official Email</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="local-students-tbody">
+                                    <tr><td colspan="5" style="text-align:center;">Loading students...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================================== -->
+                <!-- SECTION 6: STUDENT PROFILE (Student Role)                   -->
+                <!-- =========================================================== -->
+                <div id="section-col-stu-profile" class="col-page-section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>🎓 Student Academic Profile</h3>
+                                <p>Records held by College B University</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-2">
+                                <div><p class="cert-item-label">Student Name</p><p class="cert-item-value">Bob Smith</p></div>
+                                <div><p class="cert-item-label">Student ID</p><p class="cert-item-value" style="font-family:var(--font-mono);">STU-2023-002</p></div>
+                                <div><p class="cert-item-label">Official Email</p><p class="cert-item-value">bob.smith@collegeb.edu</p></div>
+                                <div><p class="cert-item-label">Program</p><p class="cert-item-value">Information Technology</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

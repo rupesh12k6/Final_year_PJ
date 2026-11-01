@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveFlow UI Foundation Test — Consent Manager</title>
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS (Vendor Local) -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11.3 (Vendor Local) -->
+    <link href="vendor/css/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DriveFlow Theme CSS (Consent Manager Fiduciary Blue) -->
+    <link href="css/driveflow-theme.css" rel="stylesheet">
+</head>
+<body>
+    <div class="df-layout-container">
+        <!-- DriveFlow Sidebar -->
+        <aside class="df-sidebar">
+            <div class="df-sidebar-brand">
+                <div class="df-sidebar-brand-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <div class="df-sidebar-brand-text">
+                    <p class="df-brand-tag">DEPA FIDUCIARY ROOT</p>
+                    <h1 class="df-brand-title">Consent Manager</h1>
+                </div>
+            </div>
+
+            <!-- User Session Card -->
+            <div class="df-sidebar-user">
+                <div class="df-user-avatar">SA</div>
+                <div class="df-user-details">
+                    <p class="df-user-email">superadmin@depa.central</p>
+                    <div class="df-user-role-badge">
+                        <span class="df-status-dot"></span>
+                        <span>Super Administrator</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="df-sidebar-nav">
+                <p class="df-nav-section-title">Main Navigation</p>
+                <a href="#overview" class="df-nav-link active">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="#organizations" class="df-nav-link">
+                    <i class="bi bi-building"></i>
+                    <span>Institutions</span>
+                    <span class="df-nav-badge bg-primary text-white">24</span>
+                </a>
+                <a href="#consents" class="df-nav-link">
+                    <i class="bi bi-file-earmark-check-fill"></i>
+                    <span>Consent Artifacts</span>
+                </a>
+                <a href="#logs" class="df-nav-link">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Audit Registry</span>
+                </a>
+
+                <p class="df-nav-section-title mt-3">System & Security</p>
+                <a href="#keys" class="df-nav-link">
+                    <i class="bi bi-key-fill"></i>
+                    <span>Key Authority (JWKS)</span>
+                </a>
+                <a href="#settings" class="df-nav-link">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>System Settings</span>
+                </a>
+            </nav>
+
+            <div class="df-sidebar-footer">
+                <button class="df-logout-btn" id="sidebar-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="df-main-content">
+            <!-- DriveFlow Top Navbar -->
+            <header class="df-top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="df-navbar-breadcrumb">
+                        <span>CONSENT MANAGER</span>
+                        <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
+                        <span class="text-dark">ROOT DASHBOARD</span>
+                    </div>
+                    <div class="input-group input-group-sm d-none d-md-flex ms-3" style="max-width: 280px;">
+                        <input type="text" class="df-form-control form-control-sm" placeholder="Search records..." />
+                    </div>
+                </div>
+
+                <div class="df-navbar-actions">
+                    <span class="df-badge df-badge-blue">
+                        <i class="bi bi-cpu-fill"></i>
+                        <span>DEPA V1.0 LIVE</span>
+                    </span>
+                    <button class="df-icon-btn" title="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="df-icon-btn-badge"></span>
+                    </button>
+                    <div class="d-flex align-items-center gap-2 ps-2 border-start">
+                        <div class="df-user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">SA</div>
+                        <div class="d-none d-lg-block text-start">
+                            <div class="fw-semibold text-dark small" style="line-height: 1.1;">Central Root</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Port 8095</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Page Scrollable Content -->
+            <main class="df-content-scrollable">
+                <!-- 1. Hero Greeting Banner -->
+                <div id="hero-banner-mount"></div>
+
+                <!-- 2. StatCards Responsive Grid -->
+                <div class="row g-3 mb-4" id="stat-cards-mount"></div>
+
+                <!-- 3. Action Bar with Conic Shine Buttons & Pill Inputs -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">DriveFlow Form & Button Controls</h5>
+                            <p class="text-muted small mb-0">Testing animated conic shine buttons, secondary pills, and interactive modals.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <button type="button" class="df-btn-pill-secondary" id="btn-test-modal">
+                                <i class="bi bi-window-stack me-1"></i> Launch Modal
+                            </button>
+                            <button type="button" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-medium text-sm" id="btn-test-confirm">
+                                <i class="bi bi-shield-exclamation me-1"></i> Confirm Dialog
+                            </button>
+                            <div id="shine-btn-mount"></div>
+                        </div>
+                    </div>
+                    <div class="border-top mt-3 pt-3">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-auto text-muted small fw-semibold">Interactive Toasts:</div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="DF_UI.showToast('Consent artifact registered and anchored in ledger!', 'success')">
+                                    <i class="bi bi-check-circle me-1"></i> Success Toast
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="DF_UI.showToast('Validation failed: Signature expired or tampered.', 'error')">
+                                    <i class="bi bi-x-circle me-1"></i> Error Toast
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="DF_UI.showToast('Warning: Institutional key expires in 48 hours.', 'warning')">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> Warning Toast
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="DF_UI.showToast('Audit log synchronized with 3 consensus peers.', 'info')">
+                                    <i class="bi bi-info-circle me-1"></i> Info Toast
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Data Table with Gradient Header & Status Badges -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Active Institutional Consents</h5>
+                            <p class="text-muted small mb-0">Gradient header table demonstrating DriveFlow data grid & status badges</p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" class="df-form-control form-control-sm" placeholder="Filter records..." style="width: 200px;">
+                        </div>
+                    </div>
+                    <div id="datatable-mount"></div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 px-2">
+                        <span class="text-muted small">Showing 1 to 4 of 24 records</span>
+                        <div id="pagination-mount"></div>
+                    </div>
+                </div>
+
+                <!-- 5. Component States Showcase: Loading, Empty, Error -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <h6 class="fw-bold text-muted text-uppercase tracking-wider small">Standard Component State Views</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="loading-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="empty-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="error-state-mount"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.3 JS Bundle (Vendor Local) -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+    <!-- DriveFlow UI Component Library -->
+    <script src="js/ui-components.js"></script>
+
+    <!-- Test Harness Driver -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Mount Hero Banner
+            document.getElementById('hero-banner-mount').innerHTML = DF_UI.renderHeroBanner({
+                tag: 'CONSENT ARCHITECTURE ROOT',
+                title: 'Regulatory Trust & Governance Authority',
+                subtitle: 'Consent Manager Node — Central Directory & Fiduciary Ledger',
+                metrics: [
+                    { value: '24', label: 'Active Orgs' },
+                    { value: '1,420', label: 'Consents' },
+                    { value: '99.99%', label: 'Uptime' }
+                ]
+            });
+
+            // 2. Mount StatCards
+            const statCardsHtml = [
+                DF_UI.renderStatCard({ label: 'REGISTERED INSTITUTIONS', value: '24 Nodes', icon: 'bi-building', color: 'blue', trend: { direction: 'up', text: '+3 new this month' } }),
+                DF_UI.renderStatCard({ label: 'ACTIVE CONSENTS', value: '1,420 Active', icon: 'bi-shield-check', color: 'emerald', trend: { direction: 'up', text: '+18% growth' } }),
+                DF_UI.renderStatCard({ label: 'PENDING AUTHORIZATIONS', value: '18 In Review', icon: 'bi-clock-history', color: 'amber', trend: null }),
+                DF_UI.renderStatCard({ label: 'REVOKED CONSENTS', value: '7 Revoked', icon: 'bi-slash-circle', color: 'rose', trend: { direction: 'down', text: '0 incidents' } })
+            ].map(card => `<div class="col-sm-6 col-xl-3">${card}</div>`).join('');
+            document.getElementById('stat-cards-mount').innerHTML = statCardsHtml;
+
+            // 3. Mount Shine Button
+            document.getElementById('shine-btn-mount').innerHTML = DF_UI.renderShineButton({
+                id: 'btn-create-consent',
+                text: 'New Policy Rule',
+                icon: 'bi-plus-lg',
+                variant: 'primary'
+            });
+
+            // 4. Mount DataTable with Sample DEPA Data
+            const sampleData = [
+                { id: 'CON-2026-001', student: 'Alice Johnson', provider: 'College A (Provider)', consumer: 'College B (Consumer)', scope: 'Transcript, Degree Certificate', status: 'ACTIVE' },
+                { id: 'CON-2026-002', student: 'Bob Williams', provider: 'College A (Provider)', consumer: 'College B (Consumer)', scope: 'Identity Dossier', status: 'PENDING' },
+                { id: 'CON-2026-003', student: 'Carol Martinez', provider: 'College A (Provider)', consumer: 'TechCorp Recruiter', scope: 'Grades & Honors', status: 'REVOKED' },
+                { id: 'CON-2026-004', student: 'David Lee', provider: 'College A (Provider)', consumer: 'Graduate School Inst', scope: 'Full Academic Portfolio', status: 'APPROVED' }
+            ];
+
+            const columns = [
+                { key: 'id', label: 'Consent ID', width: '150px', render: (val) => `<span class="fw-bold font-monospace text-primary">${val}</span>` },
+                { key: 'student', label: 'Data Principal', render: (val) => `<span class="fw-semibold text-dark">${val}</span>` },
+                { key: 'provider', label: 'Provider Node' },
+                { key: 'consumer', label: 'Consumer Node' },
+                { key: 'scope', label: 'Authorized Purpose / Scope' },
+                { key: 'status', label: 'Status', render: (val) => DF_UI.renderStatusBadge(val) },
+                { key: 'actions', label: 'Actions', render: (_, row) => `
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-light rounded-pill px-2 py-1 text-primary fw-medium" onclick="alert('Viewing consent: ${row.id}')">
+                            <i class="bi bi-eye-fill me-1"></i>View
+                        </button>
+                    </div>
+                ` }
+            ];
+
+            document.getElementById('datatable-mount').innerHTML = DF_UI.renderDataTable({
+                id: 'consents-table',
+                columns: columns,
+                data: sampleData
+            });
+
+            // 5. Mount Pagination
+            document.getElementById('pagination-mount').innerHTML = DF_UI.renderPagination({
+                page: 1,
+                total: 24,
+                perPage: 4
+            });
+
+            // 6. Mount State Boxes
+            document.getElementById('loading-state-mount').innerHTML = DF_UI.renderLoadingState('Syncing blockchain ledger...');
+            document.getElementById('empty-state-mount').innerHTML = DF_UI.renderEmptyState({
+                icon: 'bi-archive',
+                title: 'No Pending Policies',
+                description: 'All submitted institutional policies have been ratified.'
+            });
+            document.getElementById('error-state-mount').innerHTML = DF_UI.renderErrorState({
+                title: 'Sync Interrupted',
+                message: 'Timeout connecting to auxiliary cryptographic HSM.'
+            });
+
+            // Interactive Event Handlers
+            document.getElementById('btn-test-modal').addEventListener('click', () => {
+                DF_UI.showModal({
+                    title: 'DEPA Governance Policy Inspector',
+                    contentHtml: `
+                        <p class="text-muted">This modal features a backdrop-blur effect identical to DriveFlow modals.</p>
+                        <div class="p-3 bg-light rounded-3 border mb-3">
+                            <div class="small fw-bold text-dark mb-1">Cryptographic Binding Parameters</div>
+                            <div class="text-muted small">Algorithm: RS256 | Key ID: <code>cm-active-key-2026</code></div>
+                            <div class="text-muted small">Access Token TTL: 900 seconds (15 minutes)</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="policyStrict" checked>
+                            <label class="form-check-label small" for="policyStrict">Enforce strict origin domain matching</label>
+                        </div>
+                    `,
+                    footerHtml: `
+                        <button type="button" class="df-btn-pill-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" onclick="DF_UI.showToast('Policy updated successfully', 'success')">Save Policy</button>
+                    `
+                });
+            });
+
+            document.getElementById('btn-test-confirm').addEventListener('click', () => {
+                DF_UI.showConfirmDialog({
+                    title: 'Revoke Academic Data Stream?',
+                    message: 'Revoking this consent immediately invalidates all active Access JWTs and halts live data ingestion by College B.',
+                    confirmText: 'Revoke Access Now',
+                    confirmVariant: 'danger',
+                    onConfirm: async () => {
+                        await new Promise(r => setTimeout(r, 600));
+                        DF_UI.showToast('Consent stream successfully revoked.', 'success');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

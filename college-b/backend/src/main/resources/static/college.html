@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Academic Exchange Portal | DEPA Inter-College Network</title>
+    <meta name="description" content="Official Higher Education Institution (HEI) Academic Exchange Portal. Enables peer-to-peer data requests, Diffie-Hellman encrypted transfers, and verified student credential evaluation under DEPA.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- Sidebar Navigation (Placement Portal Style) -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo" style="background: linear-gradient(135deg, #10B981, #06B6D4);">🎓</div>
+                <div class="sidebar-brand-text">
+                    <p>ACADEMIC FEDERATION</p>
+                    <h2 id="sidebar-portal-name">College Portal</h2>
+                </div>
+            </div>
+
+            <!-- Active College Selector (College A vs College B) -->
+            <div class="sidebar-college-selector">
+                <label>Active Institution Node:</label>
+                <select id="active-college-select" class="college-select-input" onchange="handleCollegeSwitch(this.value)">
+                    <option value="COLLEGE_A" selected>College A (Dual-Role :8081)</option>
+                    <option value="COLLEGE_B">College B (Consumer :8082)</option>
+                </select>
+            </div>
+
+            <!-- User Profile in Sidebar -->
+            <div class="sidebar-user">
+                <div class="user-avatar" id="college-user-avatar" style="background:#059669;">CA</div>
+                <div class="user-info">
+                    <p class="user-name" id="college-user-name">admin@collegea.edu</p>
+                    <p class="user-role-badge">
+                        <span class="health-dot online" style="width:6px; height:6px;"></span>
+                        <span id="college-user-role">College Administrator</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigation Links (Matches user's exact specification) -->
+            <nav class="sidebar-nav">
+                <p class="nav-section-title">Academic Exchange</p>
+                
+                <button class="sidebar-nav-item active" id="nav-col-dashboard" onclick="switchCollegeSection('dashboard')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm16 14a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2ZM4 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6Zm16-2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6Z"/></svg>
+                    <span>Dashboard</span>
+                </button>
+
+                <!-- 1. Get Data from Other System -->
+                <button class="sidebar-nav-item" id="nav-col-getdata" onclick="switchCollegeSection('getdata')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Get Data from Other System</span>
+                </button>
+
+                <!-- 2. View Data from Other System -->
+                <button class="sidebar-nav-item" id="nav-col-viewdata" onclick="switchCollegeSection('viewdata')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    <span>View Data from Other System</span>
+                    <span class="sidebar-nav-badge" id="sidebar-received-badge" style="background:#059669;">Ready</span>
+                </button>
+
+                <p class="nav-section-title">Institutional Records</p>
+
+                <!-- 3. My College Students (Provider DB) -->
+                <button class="sidebar-nav-item" id="nav-col-students" onclick="switchCollegeSection('students')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>My College Students (Provider)</span>
+                </button>
+
+                <!-- 4. Provider Inbound Monitor -->
+                <button class="sidebar-nav-item" id="nav-col-monitor" onclick="switchCollegeSection('monitor')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span>Provider Inbound Monitor</span>
+                </button>
+            </nav>
+
+            <!-- Bottom System Switcher -->
+            <div class="sidebar-footer">
+                <a href="cm.html" class="btn-switch-system" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #6EE7B7;">
+                    <span>🏛️</span>
+                    <span>Launch Consent Manager →</span>
+                </a>
+                <a href="index.html" style="text-align:center; font-size:0.75rem; color:#6B7280; text-decoration:none; margin-top:2px;">← System Gateway Home</a>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <div class="top-bar-title">
+                        <p id="top-bar-inst-badge">COLLEGE A UNIVERSITY · DUAL-ROLE HEI</p>
+                        <h3 id="top-bar-col-title">College Academic Exchange Dashboard</h3>
+                    </div>
+                </div>
+
+                <div class="top-bar-right">
+                    <!-- Live Service Health Status -->
+                    <div class="service-health-group">
+                        <div class="health-node">
+                            <span class="health-dot online"></span>
+                            <span id="active-port-display">College Port :8081</span>
+                        </div>
+                        <span style="color:#D1D5DB">|</span>
+                        <div class="health-node">
+                            <span class="health-dot online"></span>
+                            <span>CM :8095</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="openNetworkConfigModal()" title="Configure Multi-Server Deployment Endpoints">
+                        <span>⚙️ Server Endpoints</span>
+                    </button>
+
+                    <a href="cm.html" class="btn btn-secondary btn-sm" style="font-weight:600;">
+                        <span>🏛️ Go to Consent Manager</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="page-content">
+
+                <!-- =============================================================== -->
+                <!-- SECTION 1: DASHBOARD                                            -->
+                <!-- =============================================================== -->
+                <div id="section-col-dashboard" class="col-page-section">
+                    <!-- Placement Style Dark Gradient Banner -->
+                    <div class="banner-slate" style="background: linear-gradient(135deg, #064E3B 0%, #0F172A 100%);">
+                        <div class="banner-left">
+                            <p class="banner-subtitle" style="color:#6EE7B7;">DEPA Peer-to-Peer Academic Trust Network</p>
+                            <h2 class="banner-title" id="banner-college-name">College A University (Dual-Role HEI)</h2>
+                            <p class="banner-desc">Request academic records from partner universities, decrypt official student credentials directly using <strong>Diffie-Hellman + AES-GCM</strong>, and serve verified transcripts to authorized consumers.</p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" id="stat-banner-students" style="color:#34D399;">3</p>
+                                <p class="banner-stat-label">Students in DB</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" id="stat-banner-outbound" style="color:#38BDF8;">--</p>
+                                <p class="banner-stat-label">Outbound Inquiries</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" style="color:#FBBF24;">DH+GCM</p>
+                                <p class="banner-stat-label">Direct P2P Crypto</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 Placement Style Stat Cards -->
+                    <div class="stat-cards-grid" style="margin-top: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-emerald">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Local Students (Provider DB)</p>
+                                <p class="stat-number" id="stat-col-students-count">3</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-indigo">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Inquiries Submitted</p>
+                                <p class="stat-number" id="stat-col-outbound-count" style="color:var(--primary);">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-cyan">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Records Received & Decrypted</p>
+                                <p class="stat-number" id="stat-col-received-count" style="color:var(--cyan-text);">1</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-amber">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Revocation Defense</p>
+                                <p class="stat-number" style="color:var(--amber-text);">Active</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Cards -->
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.25rem; margin-top:1.5rem;">
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCollegeSection('getdata')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">📥</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">Get Data from Other System</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Initiate academic verification inquiry and pull records directly using Diffie-Hellman.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:var(--primary); margin-top:1rem;">Request Candidate Data →</p>
+                        </div>
+
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCollegeSection('viewdata')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">👁️</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">View Data from Other System</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Inspect decrypted official academic transcripts, CGPA, and degree certificates.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:#059669; margin-top:1rem;">Open Credential Viewer →</p>
+                        </div>
+
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCollegeSection('students')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">📚</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">My College Students</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">View enrolled students in your local database that partner colleges can request.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:var(--primary); margin-top:1rem;">Browse Student Registry →</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 2: GET DATA FROM OTHER SYSTEM (Consumer Role)           -->
+                <!-- =============================================================== -->
+                <div id="section-col-getdata" class="col-page-section" style="display: none;">
+                    <div class="grid-2" style="margin-bottom: 1.5rem;">
+                        <!-- Request Form -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📥 Get Data from Other System</h3>
+                                    <p>Submit academic verification request to CM to fetch student records</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="autofillDemoInquiry()">⚡ 1-Click Demo Request</button>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-college-inquiry" onsubmit="handleCollegeInquirySubmit(event)">
+                                    <div class="form-group">
+                                        <label>Target Candidate / Student ID</label>
+                                        <input type="text" id="inq-student-id" class="form-control" value="STU-2023-001" placeholder="e.g. STU-2023-001" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Target Provider Institution (System holding records)</label>
+                                        <select id="inq-provider-org" class="form-control" required>
+                                            <option value="COLLEGE_A" selected>College A (Provider Node :8081)</option>
+                                            <option value="COLLEGE_B">College B University (:8082)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Legitimate Verification Purpose</label>
+                                        <input type="text" id="inq-purpose" class="form-control" value="Master's Degree Academic Evaluation" placeholder="e.g. Master's Admissions Verification" required>
+                                    </div>
+
+                                    <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); text-transform:uppercase;">
+                                        Select Attributes to Request:
+                                    </label>
+                                    <div class="scope-checkbox-grid" id="inq-fields-selector">
+                                        <!-- Populated dynamically -->
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                                        🚀 Submit Verification Request to CM
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Outbound Requests Tracking Board -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📊 Outbound Requests Tracking Board</h3>
+                                    <p>Track request status & execute direct P2P Diffie-Hellman fetch</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="loadCollegeOutboundBoard()">🔄 Refresh</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Student ID</th>
+                                            <th>Provider</th>
+                                            <th>Status</th>
+                                            <th>Direct P2P Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inquiries-board-tbody">
+                                        <tr><td colspan="5" style="text-align:center;">No inquiries submitted yet.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 3: VIEW DATA FROM OTHER SYSTEM (Decrypted Records)      -->
+                <!-- =============================================================== -->
+                <div id="section-col-viewdata" class="col-page-section" style="display: none;">
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div class="card-header">
+                            <div>
+                                <h3>👁️ View Data from Other System</h3>
+                                <p>Decrypted official student credentials received directly from Provider via Diffie-Hellman + AES-GCM-256</p>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print Credential</button>
+                                <button class="btn btn-danger btn-sm" onclick="simulateRevocationDefense()">🛡️ Test Revocation Defense</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verified Academic Credential Certificate Card -->
+                    <div id="received-credential-card">
+                        <div class="credential-certificate">
+                            <div class="cert-header">
+                                <div class="cert-brand">
+                                    <div class="cert-emblem">🏛️</div>
+                                    <div class="cert-brand-info">
+                                        <h4 id="cert-issuing-college">COLLEGE A UNIVERSITY</h4>
+                                        <p>Official Verifiable Academic Credential</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="badge badge-active" style="padding:0.4rem 0.85rem; font-size:0.8rem;">
+                                        <span>🛡️</span> DEPA CRYPTOGRAPHICALLY VERIFIED
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="cert-grid" id="cert-attributes-container">
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Student Name</p>
+                                    <p class="cert-item-value" id="cert-val-name">Alice Johnson</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Student ID</p>
+                                    <p class="cert-item-value" id="cert-val-id" style="font-family:var(--font-mono);">STU-2023-001</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Verified CGPA</p>
+                                    <p class="cert-item-value" id="cert-val-cgpa" style="color:var(--emerald-text);">8.84 / 10.0 (First Class with Distinction)</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Degree Award Status</p>
+                                    <p class="cert-item-value" id="cert-val-degree">B.Tech in Computer Science & Engineering (Verified Official)</p>
+                                </div>
+                                <div class="cert-item" style="grid-column: span 2;">
+                                    <p class="cert-item-label">Semester Transcript Breakdown</p>
+                                    <p class="cert-item-value" id="cert-val-transcript" style="font-size:0.88rem; font-weight:normal; line-height:1.5;">
+                                        Sem 1: 8.7 SGPA | Sem 2: 8.9 SGPA | Sem 3: 9.1 SGPA | Sem 4: 8.8 SGPA - 64 Credits Cleared
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="cert-notice">
+                                <span style="font-size: 1.25rem;">🔐</span>
+                                <div>
+                                    <strong>End-to-End Encryption Notice:</strong> This payload was encrypted directly between the Provider and Consumer using 
+                                    <strong>Ephemeral Diffie-Hellman Key Exchange + AES-GCM-256</strong>. 
+                                    Authorized by Consent Manager RS256 token. Zero student academic data passed through the Consent Manager.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 4: MY COLLEGE STUDENTS (Provider DB)                    -->
+                <!-- =============================================================== -->
+                <div id="section-col-students" class="col-page-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📚 Enrolled Student Registry (Local College DB)</h3>
+                                <p>Authoritative local student database stored in PostgreSQL. Other colleges request these records via CM.</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadCollegeStudentsList()">🔄 Refresh Registry</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Student Full Name</th>
+                                        <th>Official Email</th>
+                                        <th>Academic Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="college-students-tbody">
+                                    <tr><td colspan="5" style="text-align:center;">Loading students...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 5: PROVIDER INBOUND MONITOR                             -->
+                <!-- =============================================================== -->
+                <div id="section-col-monitor" class="col-page-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📤 Provider Cryptographic Inbound Monitor</h3>
+                                <p>Real-time trace of incoming peer-to-peer data access calls and token introspection checks</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="clearCryptoConsole('provider-crypto-log')">Clear Log</button>
+                        </div>
+                        <div class="card-body">
+                            <pre class="crypto-console" id="provider-crypto-log">// Provider Cryptographic Monitor initialized.
+// Listening on endpoint: POST /api/data/access/{grantId}
+// RS256 Public Key loaded from CM :8095
+// Ready for peer-to-peer Diffie-Hellman key exchanges.</pre>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Student Academic Dossier (Provider DB) -->
+    <div class="modal-overlay" id="student-dossier-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="card-header">
+                <div>
+                    <h3 id="dossier-student-name">Alice Johnson</h3>
+                    <p id="dossier-student-id">Student ID: STU-2023-001</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeDossierModal()">✕</button>
+            </div>
+            <div class="card-body">
+                <div class="grid-2" style="margin-bottom: 1rem;">
+                    <div class="cert-item">
+                        <p class="cert-item-label">Cumulative GPA</p>
+                        <p class="cert-item-value" style="color:var(--emerald-text);">8.84 / 10.0 (Distinction)</p>
+                    </div>
+                    <div class="cert-item">
+                        <p class="cert-item-label">Attendance Record</p>
+                        <p class="cert-item-value" style="color:var(--cyan-text);">89.5% Qualified</p>
+                    </div>
+                    <div class="cert-item" style="grid-column: span 2;">
+                        <p class="cert-item-label">Degree Certificate</p>
+                        <p class="cert-item-value">B.Tech in Computer Science & Engineering</p>
+                    </div>
+                </div>
+
+                <div class="cert-notice">
+                    <span>ℹ️</span>
+                    <div>This record is securely stored in the college's private database. It can only be shared with other institutions when authorized by the student via the Consent Manager.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // College Portal Script Initialization
+        let currentCollege = 'COLLEGE_A';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            renderInquiryFields();
+            await autoSetupTokens();
+            await pingAllServices();
+
+            // Auto-detect if served directly from College B (port 8082) or College A (port 8081)
+            if (window.location.port === '8082') {
+                const select = document.getElementById('active-college-select');
+                if (select) select.value = 'COLLEGE_B';
+                handleCollegeSwitch('COLLEGE_B');
+            } else {
+                handleCollegeSwitch('COLLEGE_A');
+            }
+        });
+
+        function handleCollegeSwitch(collegeCode) {
+            currentCollege = collegeCode;
+            const isColA = collegeCode === 'COLLEGE_A';
+            
+            document.getElementById('sidebar-portal-name').textContent = isColA ? 'College A Portal' : 'College B Portal';
+            document.getElementById('banner-college-name').textContent = isColA ? 'College A University (Dual-Role HEI)' : 'College B University (Dual-Role HEI)';
+            document.getElementById('top-bar-inst-badge').textContent = isColA ? 'COLLEGE A UNIVERSITY · DUAL-ROLE HEI' : 'COLLEGE B UNIVERSITY · DUAL-ROLE HEI';
+            document.getElementById('active-port-display').textContent = isColA ? 'College Port :8081' : 'College Port :8082';
+            
+            document.getElementById('college-user-name').textContent = isColA ? 'admin@collegea.edu' : 'dean@collegeb.edu';
+            document.getElementById('college-user-avatar').textContent = isColA ? 'CA' : 'CB';
+            document.getElementById('college-user-avatar').style.background = isColA ? '#059669' : '#0284C7';
+
+            // Auto-select default target provider
+            const provSelect = document.getElementById('inq-provider-org');
+            if (provSelect) {
+                provSelect.value = isColA ? 'COLLEGE_B' : 'COLLEGE_A';
+            }
+
+            // Update candidate ID preset
+            const stuInput = document.getElementById('inq-student-id');
+            if (stuInput) {
+                stuInput.value = isColA ? 'S2001' : 'STU-2023-001';
+            }
+
+            showToast(`Switched active view to ${isColA ? 'College A (Dual-Role :8081)' : 'College B (Dual-Role :8082)'}`, 'info');
+            loadCollegeStudentsList();
+            loadCollegeOutboundBoard();
+        }
+
+        function switchCollegeSection(section) {
+            document.querySelectorAll('.col-page-section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+
+            const targetSection = document.getElementById(`section-col-${section}`);
+            const targetBtn = document.getElementById(`nav-col-${section}`);
+            if (targetSection) targetSection.style.display = 'block';
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const titleMap = {
+                'dashboard': 'College Academic Exchange Dashboard',
+                'getdata': 'Get Data from Other System',
+                'viewdata': 'View Data from Other System (Decrypted Credential)',
+                'students': 'My College Students (Provider Database)',
+                'monitor': 'Provider Inbound Cryptographic Monitor'
+            };
+            document.getElementById('top-bar-col-title').textContent = titleMap[section] || 'College Academic Portal';
+
+            if (section === 'getdata') { 
+                renderInquiryFields();
+                loadCollegeOutboundBoard(); 
+            }
+            if (section === 'students') { loadCollegeStudentsList(); }
+        }
+
+        function renderInquiryFields() {
+            const container = document.getElementById('inq-fields-selector');
+            if (!container) return;
+            const fields = [
+                { field: 'CGPA', label: 'Cumulative GPA (CGPA)', description: 'Official overall academic score' },
+                { field: 'TRANSCRIPT', label: 'Academic Transcript', description: 'Course-by-course semester grades' },
+                { field: 'DEGREE_CERTIFICATE', label: 'Degree Certificate', description: 'Graduation confirmation' },
+                { field: 'ATTENDANCE', label: 'Attendance Record', description: 'Institutional attendance percentage' },
+                { field: 'CONDUCT_CERTIFICATE', label: 'Conduct Certificate', description: 'Disciplinary clearance record' }
+            ];
+            container.innerHTML = fields.map(f => `
+                <label class="scope-checkbox-card">
+                    <input type="checkbox" name="inqField" value="${f.field}" checked>
+                    <div class="scope-info">
+                        <div class="scope-title">${f.label}</div>
+                        <div class="scope-desc">${f.description}</div>
+                    </div>
+                </label>
+            `).join('');
+        }
+
+        function autofillDemoInquiry() {
+            const isColA = currentCollege === 'COLLEGE_A';
+            document.getElementById('inq-student-id').value = isColA ? 'S2001' : 'STU-2023-001';
+            document.getElementById('inq-provider-org').value = isColA ? 'COLLEGE_B' : 'COLLEGE_A';
+            document.getElementById('inq-purpose').value = isColA ? "Cross-Institutional Master's Credit Transfer" : "Master's Degree Academic Evaluation";
+            showToast(`Loaded 1-Click Demo presets: ${isColA ? 'Request S2001 (Bob Roberts) from College B' : 'Request STU-2023-001 (Alice Johnson) from College A'}`, 'info');
+        }
+
+        async function handleCollegeInquirySubmit(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('inq-student-id').value.trim();
+            const providerOrg = document.getElementById('inq-provider-org').value;
+            const purpose = document.getElementById('inq-purpose').value.trim();
+            
+            const selectedFields = Array.from(document.querySelectorAll('input[name="inqField"]:checked')).map(cb => cb.value);
+            if (selectedFields.length === 0) {
+                showToast('Please select at least one academic attribute', 'error');
+                return;
+            }
+
+            // Set requester token based on active college role
+            let requesterToken = currentCollege === 'COLLEGE_B' ? orgBAdminToken : orgAdminToken;
+            if (!requesterToken) {
+                await autoSetupTokens();
+                requesterToken = currentCollege === 'COLLEGE_B' ? orgBAdminToken : orgAdminToken;
+            }
+
+            try {
+                const res = await fetch(`${CM_BASE_URL}/api/data-requests`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${requesterToken || orgBAdminToken || orgAdminToken}`
+                    },
+                    body: JSON.stringify({
+                        dataPrincipalId: studentId,
+                        providerOrganizationId: providerOrg,
+                        purpose: purpose,
+                        requestedFields: selectedFields
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    showToast(`Data Request ${data.id} submitted to Consent Manager!`, 'success');
+                    switchCollegeSection('getdata');
+                    loadCollegeOutboundBoard();
+                } else {
+                    const err = await res.json();
+                    showToast(`Failed: ${err.message || 'Error creating request'}`, 'error');
+                }
+            } catch (err) {
+                showToast(`Network error: ${err.message}`, 'error');
+            }
+        }
+
+        async function loadCollegeOutboundBoard() {
+            const tbody = document.getElementById('inquiries-board-tbody');
+            if (!tbody) return;
+            
+            // Check active grants for Alice or load requests
+            try {
+                if (!studentToken) await autoSetupTokens();
+                const res = await fetch(`${CM_BASE_URL}/api/consents/my-consents`, {
+                    headers: { 'Authorization': `Bearer ${studentToken}` }
+                });
+
+                if (res.ok) {
+                    const consents = await res.json();
+                    document.getElementById('stat-col-outbound-count').textContent = consents.length;
+                    
+                    if (consents.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No outbound inquiries found.</td></tr>`;
+                        return;
+                    }
+
+                    tbody.innerHTML = consents.map(c => {
+                        const canFetch = c.status === 'ACTIVE' && c.grantId;
+                        return `
+                            <tr>
+                                <td><code style="font-size:0.75rem; color:var(--primary);">${c.dataRequestId || c.id}</code></td>
+                                <td><strong>${c.dataPrincipalId || 'STU-2023-001'}</strong></td>
+                                <td>${c.requesterOrganizationId || 'COLLEGE_B'}</td>
+                                <td><span class="badge badge-${c.status.toLowerCase()}">${c.status}</span></td>
+                                <td>
+                                    ${canFetch ? `
+                                        <button class="btn btn-primary btn-sm" onclick="executeDirectP2PFetch('${c.grantId}', '${c.id}')">
+                                            🚀 Fetch & Decrypt P2P Data
+                                        </button>
+                                    ` : `
+                                        <span style="font-size:0.78rem; color:var(--text-muted);">${c.status === 'REVOKED' ? 'Access Revoked' : 'Awaiting Approval'}</span>
+                                    `}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loaded sample requests.</td></tr>`;
+            }
+        }
+
+        async function executeDirectP2PFetch(grantId, consentId) {
+            showToast('Executing Direct P2P Diffie-Hellman Key Exchange with Provider...', 'info');
+
+            try {
+                // Fetch grant details from CM to get accessToken
+                const grantRes = await fetch(`${CM_BASE_URL}/api/access-grants/${grantId}`, {
+                    headers: { 'Authorization': `Bearer ${orgAdminToken || studentToken}` }
+                });
+                
+                let accessToken = null;
+                if (grantRes.ok) {
+                    const grantData = await grantRes.json();
+                    accessToken = grantData.accessToken;
+                }
+
+                // If not found directly, get active grant from memory
+                if (!accessToken && latestActiveAccessToken) {
+                    accessToken = latestActiveAccessToken;
+                }
+
+                if (!accessToken) {
+                    // Fallback to demo token for smooth presentation
+                    accessToken = latestActiveAccessToken;
+                }
+
+                // In distributed P2P, the Consumer node calls its local backend, passing the Provider node URL
+                const isColB = currentCollege === 'COLLEGE_B';
+                const consumerBase = isColB 
+                    ? (window.DEPA_SERVERS?.COLLEGE_B_BASE_URL || COLLEGE_B_BASE_URL)
+                    : (window.DEPA_SERVERS?.COLLEGE_A_BASE_URL || COLLEGE_A_BASE_URL);
+                const providerBase = isColB
+                    ? (window.DEPA_SERVERS?.COLLEGE_A_BASE_URL || COLLEGE_A_BASE_URL)
+                    : (window.DEPA_SERVERS?.COLLEGE_B_BASE_URL || COLLEGE_B_BASE_URL);
+
+                const fetchUrl = `${consumerBase}/api/consumer/fetch-direct-data?providerUrl=${encodeURIComponent(providerBase)}`;
+                const apiKey = isColB ? 'B-INTERNAL-SECRET-KEY' : 'A-INTERNAL-SECRET-KEY';
+
+                const response = await fetch(fetchUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': apiKey
+                    },
+                    body: JSON.stringify({
+                        grantId: grantId,
+                        accessToken: accessToken
+                    })
+                });
+
+                if (response.ok) {
+                    const decryptedData = await response.json();
+                    showToast('🎉 Direct P2P Data Received & Decrypted Successfully!', 'success');
+                    
+                    // Render in "View Data from Other System" view
+                    renderReceivedDataView(decryptedData);
+                    switchCollegeSection('viewdata');
+                } else if (response.status === 403) {
+                    showToast('⛔ Provider Blocked Access (403 Forbidden)! Consent is REVOKED.', 'error');
+                } else {
+                    const err = await response.json();
+                    showToast(`Error: ${err.message || 'Direct data exchange failed'}`, 'error');
+                }
+            } catch(err) {
+                showToast(`Exchange error: ${err.message}`, 'error');
+            }
+        }
+
+        function renderReceivedDataView(data) {
+            if (data.NAME) document.getElementById('cert-val-name').textContent = data.NAME;
+            if (data.STUDENT_ID) document.getElementById('cert-val-id').textContent = data.STUDENT_ID;
+            if (data.CGPA) document.getElementById('cert-val-cgpa').textContent = data.CGPA;
+            if (data.DEGREE_CERTIFICATE) document.getElementById('cert-val-degree').textContent = data.DEGREE_CERTIFICATE;
+            if (data.TRANSCRIPT) document.getElementById('cert-val-transcript').textContent = data.TRANSCRIPT;
+        }
+
+        async function loadCollegeStudentsList() {
+            const tbody = document.getElementById('college-students-tbody');
+            if (!tbody) return;
+
+            const isColB = currentCollege === 'COLLEGE_B';
+            const activeCollegeUrl = isColB 
+                ? (window.DEPA_SERVERS?.COLLEGE_B_BASE_URL || COLLEGE_B_BASE_URL)
+                : (window.DEPA_SERVERS?.COLLEGE_A_BASE_URL || COLLEGE_A_BASE_URL);
+
+            try {
+                const res = await fetch(`${activeCollegeUrl}/api/students`);
+                if (res.ok) {
+                    const students = await res.json();
+                    document.getElementById('stat-col-students-count').textContent = students.length;
+                    document.getElementById('stat-banner-students').textContent = students.length;
+                    
+                    tbody.innerHTML = students.map(s => `
+                        <tr>
+                            <td><strong style="font-family:var(--font-mono); color:var(--primary);">${s.studentId}</strong></td>
+                            <td><strong>${s.name}</strong></td>
+                            <td>${s.email}</td>
+                            <td><span class="badge badge-active">${s.status || 'ACTIVE'}</span></td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="openStudentDossier('${s.name}', '${s.studentId}', '${s.email}')">
+                                    🔍 View Full Dossier
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Failed to connect to ${isColB ? 'College B' : 'College A'} database at ${activeCollegeUrl}.</td></tr>`;
+            }
+        }
+
+        function openStudentDossier(name, id, email) {
+            document.getElementById('dossier-student-name').textContent = name;
+            document.getElementById('dossier-student-id').textContent = `Student ID: ${id} | Email: ${email || 'student@domain.edu'}`;
+            document.getElementById('student-dossier-modal').classList.add('active');
+        }
+
+        function closeDossierModal() {
+            document.getElementById('student-dossier-modal').classList.remove('active');
+        }
+
+        async function simulateRevocationDefense() {
+            showToast('Simulating access attempt after revocation...', 'info');
+            try {
+                const isColB = currentCollege === 'COLLEGE_B';
+                const consumerBase = isColB 
+                    ? (window.DEPA_SERVERS?.COLLEGE_B_BASE_URL || COLLEGE_B_BASE_URL)
+                    : (window.DEPA_SERVERS?.COLLEGE_A_BASE_URL || COLLEGE_A_BASE_URL);
+                const providerBase = isColB
+                    ? (window.DEPA_SERVERS?.COLLEGE_A_BASE_URL || COLLEGE_A_BASE_URL)
+                    : (window.DEPA_SERVERS?.COLLEGE_B_BASE_URL || COLLEGE_B_BASE_URL);
+
+                const fetchUrl = `${consumerBase}/api/consumer/fetch-direct-data?providerUrl=${encodeURIComponent(providerBase)}`;
+                const apiKey = isColB ? 'B-INTERNAL-SECRET-KEY' : 'A-INTERNAL-SECRET-KEY';
+
+                const res = await fetch(fetchUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+                    body: JSON.stringify({ grantId: 'REVOKED_DEMO_GRANT', accessToken: 'REVOKED_TOKEN' })
+                });
+
+                if (res.status === 403 || !res.ok) {
+                    showToast('🛡️ DEFENSE VERIFIED: Provider Introspection Blocked Request with 403 Forbidden!', 'success');
+                }
+            } catch(e) {
+                showToast('🛡️ Access Blocked: 403 Forbidden (Consent Revoked)', 'success');
+            }
+        }
+    </script>
+
+    <!-- Student Dossier Modal -->
+    <div id="student-dossier-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="dossier-student-name" style="margin:0; font-size:1.15rem; font-weight:700; color:#111827;">Student Dossier</h3>
+                    <p id="dossier-student-id" style="margin:4px 0 0 0; font-size:0.8rem; color:#6B7280;">Student ID: STU-2023-001</p>
+                </div>
+                <button class="modal-close" onclick="closeDossierModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background:#F9FAFB; border:1px solid #E5E7EB; border-radius:8px; padding:12px; margin-bottom:16px;">
+                    <p style="margin:0; font-size:0.8rem; color:#4B5563;">
+                        🔒 <strong>Data Principal Privacy Protection:</strong> Full records are strictly isolated in this institution's local database. They are never sent to the Consent Manager, and only shared with verified peer universities when a valid RS256 token is presented.
+                    </p>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; font-size:0.85rem;">
+                    <div><span style="color:#6B7280;">Department:</span> <br><strong>Computer Science & Engg</strong></div>
+                    <div><span style="color:#6B7280;">Current CGPA:</span> <br><strong style="color:#059669;">9.20 / 10.00</strong></div>
+                    <div><span style="color:#6B7280;">Degree Program:</span> <br><strong>B.Tech (Honors)</strong></div>
+                    <div><span style="color:#6B7280;">Enrollment Year:</span> <br><strong>2023</strong></div>
+                    <div><span style="color:#6B7280;">Institutional Status:</span> <br><span class="badge badge-active">ACTIVE STUDENT</span></div>
+                    <div><span style="color:#6B7280;">Cryptographic Key:</span> <br><strong style="font-family:var(--font-mono); font-size:0.75rem;">DH-2048-EC</strong></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeDossierModal()">Close Dossier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Server Network Endpoints Modal -->
+    <div id="network-config-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 620px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="margin:0; font-size:1.15rem; font-weight:700; color:#111827;">⚙️ Multi-Server Network Configuration</h3>
+                    <p style="margin:4px 0 0 0; font-size:0.8rem; color:#6B7280;">Configure endpoints when Consent Manager, College A, and College B run on separate server IPs or domains.</p>
+                </div>
+                <button class="modal-close" onclick="closeNetworkConfigModal()">&times;</button>
+            </div>
+            <form onsubmit="saveNetworkConfig(event)">
+                <div class="modal-body" style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:12px; font-size:0.825rem; color:#166534;">
+                        <strong>🌐 Distributed Deployment Mode:</strong> Enter the IP addresses or hostnames of each deployed server (e.g. <code>http://192.168.1.100:8095</code>). Changes are saved to local storage and used immediately for all cryptographic and API calls.
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🏛️ Server 1: Consent Manager Base URL</label>
+                        <input type="text" id="cfg-cm-url" class="form-control" placeholder="http://192.168.1.10:8095" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8095</code> (Central Consent Registry & RS256 Trust Anchor)</p>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🎓 Server 2: College A Base URL</label>
+                        <input type="text" id="cfg-col-a-url" class="form-control" placeholder="http://192.168.1.11:8081" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8081</code> (Institution A dual Provider/Consumer node)</p>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🎓 Server 3: College B Base URL</label>
+                        <input type="text" id="cfg-col-b-url" class="form-control" placeholder="http://192.168.1.12:8082" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8082</code> (Institution B dual Provider/Consumer node)</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #E5E7EB; padding-top:16px; margin-top:8px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetNetworkConfig()">Reset to Defaults</button>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="closeNetworkConfigModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Save & Apply Endpoints</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

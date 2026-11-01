@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveFlow UI Foundation Test — College A Provider</title>
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS (Vendor Local) -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11.3 (Vendor Local) -->
+    <link href="vendor/css/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DriveFlow Theme CSS (College A Academic Emerald) -->
+    <link href="css/driveflow-theme.css" rel="stylesheet">
+</head>
+<body>
+    <div class="df-layout-container">
+        <!-- DriveFlow Sidebar -->
+        <aside class="df-sidebar">
+            <div class="df-sidebar-brand">
+                <div class="df-sidebar-brand-icon">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div class="df-sidebar-brand-text">
+                    <p class="df-brand-tag">ACADEMIC PROVIDER</p>
+                    <h1 class="df-brand-title">College A</h1>
+                </div>
+            </div>
+
+            <!-- User Session Card -->
+            <div class="df-sidebar-user">
+                <div class="df-user-avatar">RA</div>
+                <div class="df-user-details">
+                    <p class="df-user-email">registrar@college-a.edu</p>
+                    <div class="df-user-role-badge">
+                        <span class="df-status-dot"></span>
+                        <span>Registrar Officer</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="df-sidebar-nav">
+                <p class="df-nav-section-title">Registrar Services</p>
+                <a href="#overview" class="df-nav-link active">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Registrar Dashboard</span>
+                </a>
+                <a href="#students" class="df-nav-link">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Student Directory</span>
+                    <span class="df-nav-badge bg-success text-white">1,250</span>
+                </a>
+                <a href="#dossiers" class="df-nav-link">
+                    <i class="bi bi-folder-check"></i>
+                    <span>Academic Dossiers</span>
+                </a>
+                <a href="#assertions" class="df-nav-link">
+                    <i class="bi bi-patch-check-fill"></i>
+                    <span>Signed Assertions</span>
+                </a>
+
+                <p class="df-nav-section-title mt-3">DEPA Verification</p>
+                <a href="#inquiries" class="df-nav-link">
+                    <i class="bi bi-shield-shaded"></i>
+                    <span>Inbound Disclosures</span>
+                </a>
+                <a href="#keys" class="df-nav-link">
+                    <i class="bi bi-key-fill"></i>
+                    <span>Assertion Keys</span>
+                </a>
+            </nav>
+
+            <div class="df-sidebar-footer">
+                <button class="df-logout-btn" id="sidebar-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="df-main-content">
+            <!-- DriveFlow Top Navbar -->
+            <header class="df-top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="df-navbar-breadcrumb">
+                        <span>COLLEGE A</span>
+                        <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
+                        <span class="text-dark">REGISTRAR PORTAL</span>
+                    </div>
+                    <div class="input-group input-group-sm d-none d-md-flex ms-3" style="max-width: 280px;">
+                        <input type="text" class="df-form-control form-control-sm" placeholder="Search students, roll no..." />
+                    </div>
+                </div>
+
+                <div class="df-navbar-actions">
+                    <span class="df-badge df-badge-emerald">
+                        <i class="bi bi-shield-check"></i>
+                        <span>PROVIDER NODE LIVE</span>
+                    </span>
+                    <button class="df-icon-btn" title="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="df-icon-btn-badge bg-success"></span>
+                    </button>
+                    <div class="d-flex align-items-center gap-2 ps-2 border-start">
+                        <div class="df-user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: var(--df-primary);">CA</div>
+                        <div class="d-none d-lg-block text-start">
+                            <div class="fw-semibold text-dark small" style="line-height: 1.1;">College A Node</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Port 8081</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Page Scrollable Content -->
+            <main class="df-content-scrollable">
+                <!-- 1. Hero Greeting Banner -->
+                <div id="hero-banner-mount"></div>
+
+                <!-- 2. StatCards Responsive Grid -->
+                <div class="row g-3 mb-4" id="stat-cards-mount"></div>
+
+                <!-- 3. Action Bar with Conic Shine Buttons & Pill Inputs -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">Registrar Controls & Security Actions</h5>
+                            <p class="text-muted small mb-0">Testing Emerald shine buttons, student modal previews, and credential dispatch.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <button type="button" class="df-btn-pill-secondary" id="btn-test-modal">
+                                <i class="bi bi-mortarboard me-1"></i> Preview Dossier
+                            </button>
+                            <button type="button" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-medium text-sm" id="btn-test-confirm">
+                                <i class="bi bi-lock-fill me-1"></i> Lock Student Access
+                            </button>
+                            <div id="shine-btn-mount"></div>
+                        </div>
+                    </div>
+                    <div class="border-top mt-3 pt-3">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-auto text-muted small fw-semibold">Interactive Toasts:</div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="DF_UI.showToast('Transcript assertion digitally signed with college-a-key-2026!', 'success')">
+                                    <i class="bi bi-check-circle me-1"></i> Sign Success
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="DF_UI.showToast('Access rejected: CM access token expired or revoked.', 'error')">
+                                    <i class="bi bi-x-circle me-1"></i> Auth Error
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="DF_UI.showToast('Notice: 5 students pending email activation.', 'warning')">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> Notice Toast
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="DF_UI.showToast('Public assertion JWKS refreshed by College B.', 'info')">
+                                    <i class="bi bi-info-circle me-1"></i> Info Toast
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Data Table with Gradient Header & Status Badges -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Enrolled Student Academic Dossiers</h5>
+                            <p class="text-muted small mb-0">DriveFlow table with Emerald gradient header & cryptographic status tags</p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" class="df-form-control form-control-sm" placeholder="Search students..." style="width: 200px;">
+                        </div>
+                    </div>
+                    <div id="datatable-mount"></div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 px-2">
+                        <span class="text-muted small">Showing 1 to 4 of 1,250 records</span>
+                        <div id="pagination-mount"></div>
+                    </div>
+                </div>
+
+                <!-- 5. Component States Showcase: Loading, Empty, Error -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <h6 class="fw-bold text-muted text-uppercase tracking-wider small">Standard Component State Views</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="loading-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="empty-state-mount"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100" id="error-state-mount"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.3 JS Bundle (Vendor Local) -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+    <!-- DriveFlow UI Component Library -->
+    <script src="js/ui-components.js"></script>
+
+    <!-- Test Harness Driver -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Mount Hero Banner
+            document.getElementById('hero-banner-mount').innerHTML = DF_UI.renderHeroBanner({
+                tag: 'ACADEMIC CREDENTIAL PROVIDER',
+                title: 'Registrar Command Center',
+                subtitle: 'College A University Node — Academic Record Sovereign Repository',
+                metrics: [
+                    { value: '1,250', label: 'Students' },
+                    { value: '3,400', label: 'Assertions' },
+                    { value: '100%', label: 'Signed' }
+                ]
+            });
+
+            // 2. Mount StatCards
+            const statCardsHtml = [
+                DF_UI.renderStatCard({ label: 'REGISTERED STUDENTS', value: '1,250 Active', icon: 'bi-people-fill', color: 'emerald', trend: { direction: 'up', text: '+45 enrolled' } }),
+                DF_UI.renderStatCard({ label: 'VERIFIED TRANSCRIPTS', value: '3,400 Records', icon: 'bi-patch-check-fill', color: 'blue', trend: { direction: 'up', text: '100% integrity' } }),
+                DF_UI.renderStatCard({ label: 'PENDING ACTIVATIONS', value: '12 Students', icon: 'bi-key-fill', color: 'amber', trend: null }),
+                DF_UI.renderStatCard({ label: 'DISCLOSURE REQUESTS', value: '88 Inquiries', icon: 'bi-arrow-left-right', color: 'indigo', trend: { direction: 'up', text: '+12% this week' } })
+            ].map(card => `<div class="col-sm-6 col-xl-3">${card}</div>`).join('');
+            document.getElementById('stat-cards-mount').innerHTML = statCardsHtml;
+
+            // 3. Mount Emerald Shine Button
+            document.getElementById('shine-btn-mount').innerHTML = DF_UI.renderShineButton({
+                id: 'btn-issue-credential',
+                text: 'Issue Signed Dossier',
+                icon: 'bi-award-fill',
+                variant: 'emerald'
+            });
+
+            // 4. Mount DataTable with Sample College A Data
+            const sampleData = [
+                { rollNumber: 'CS2026-001', name: 'Alice Johnson', program: 'B.Tech Computer Science', cgpa: '9.45', status: 'ACTIVE' },
+                { rollNumber: 'CS2026-002', name: 'Bob Williams', program: 'B.Tech Information Tech', cgpa: '8.82', status: 'PENDING_ACTIVATION' },
+                { rollNumber: 'CS2026-003', name: 'Carol Martinez', program: 'B.Tech Data Science', cgpa: '9.10', status: 'VERIFIED' },
+                { rollNumber: 'CS2026-004', name: 'David Lee', program: 'B.Tech Cyber Security', cgpa: '8.55', status: 'SUSPENDED' }
+            ];
+
+            const columns = [
+                { key: 'rollNumber', label: 'Roll Number', width: '140px', render: (val) => `<span class="fw-bold font-monospace text-success">${val}</span>` },
+                { key: 'name', label: 'Student Name', render: (val) => `<span class="fw-semibold text-dark">${val}</span>` },
+                { key: 'program', label: 'Academic Program' },
+                { key: 'cgpa', label: 'CGPA', width: '100px', render: (val) => `<span class="badge bg-light text-dark border px-2 py-1 fw-bold">${val}</span>` },
+                { key: 'status', label: 'Dossier Status', render: (val) => DF_UI.renderStatusBadge(val) },
+                { key: 'actions', label: 'Actions', render: (_, row) => `
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-light rounded-pill px-2 py-1 text-success fw-medium" onclick="alert('Viewing dossier for: ${row.name}')">
+                            <i class="bi bi-file-earmark-person me-1"></i>View
+                        </button>
+                    </div>
+                ` }
+            ];
+
+            document.getElementById('datatable-mount').innerHTML = DF_UI.renderDataTable({
+                id: 'students-table',
+                columns: columns,
+                data: sampleData
+            });
+
+            // 5. Mount Pagination
+            document.getElementById('pagination-mount').innerHTML = DF_UI.renderPagination({
+                page: 1,
+                total: 1250,
+                perPage: 10
+            });
+
+            // 6. Mount State Boxes
+            document.getElementById('loading-state-mount').innerHTML = DF_UI.renderLoadingState('Validating cryptographic assertion keys...');
+            document.getElementById('empty-state-mount').innerHTML = DF_UI.renderEmptyState({
+                icon: 'bi-person-check',
+                title: 'No Pending Disclosures',
+                description: 'All inbound data requests have been fulfilled or rejected.'
+            });
+            document.getElementById('error-state-mount').innerHTML = DF_UI.renderErrorState({
+                title: 'Key Store Unreachable',
+                message: 'Unable to decrypt assertion private key with system ACL.'
+            });
+
+            // Interactive Event Handlers
+            document.getElementById('btn-test-modal').addEventListener('click', () => {
+                DF_UI.showModal({
+                    title: 'Student Academic Dossier — Alice Johnson',
+                    contentHtml: `
+                        <div class="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 50px; height: 50px;">AJ</div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">Alice Johnson</h5>
+                                <div class="text-muted small">Roll: CS2026-001 | B.Tech Computer Science</div>
+                            </div>
+                            <div class="ms-auto">${DF_UI.renderStatusBadge('VERIFIED')}</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-borderless">
+                                <tbody>
+                                    <tr><td class="text-muted">Cumulative GPA:</td><td class="fw-bold">9.45 / 10.0</td></tr>
+                                    <tr><td class="text-muted">Total Credits:</td><td class="fw-bold">160 Completed</td></tr>
+                                    <tr><td class="text-muted">Signature Hash:</td><td><code class="small text-truncate d-inline-block" style="max-width: 250px;">sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</code></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `,
+                    footerHtml: `
+                        <button type="button" class="df-btn-pill-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success rounded-pill px-4" onclick="DF_UI.showToast('Dossier assertion generated', 'success')">Export Signed Assertion</button>
+                    `
+                });
+            });
+
+            document.getElementById('btn-test-confirm').addEventListener('click', () => {
+                DF_UI.showConfirmDialog({
+                    title: 'Lock Student Academic Dossier?',
+                    message: 'Locking this account will temporarily suspend the student from approving new DEPA consent requests.',
+                    confirmText: 'Lock Account',
+                    confirmVariant: 'danger',
+                    onConfirm: async () => {
+                        await new Promise(r => setTimeout(r, 600));
+                        DF_UI.showToast('Student account locked.', 'success');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

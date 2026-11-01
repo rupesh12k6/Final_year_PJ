@@ -1,0 +1,13 @@
+{
+  "name": "consent-manager-frontend",
+  "version": "1.0.0",
+  "description": "Standalone Frontend for DEPA Consent Manager (Port 3001)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["depa", "consent-manager", "frontend"],
+  "author": "DEPA Engineering Team",
+  "license": "MIT"
+}

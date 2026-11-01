@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPA Consent Manager | Regulatory Fiduciary Portal</title>
+    <meta name="description" content="Central regulatory fiduciary and consent management service under the India Data Empowerment and Protection Architecture.">
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS (Vendor Local) -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11.3 (Vendor Local) -->
+    <link href="vendor/css/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DriveFlow Theme CSS -->
+    <link href="css/driveflow-theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+</head>
+<body>
+
+    <!-- Split-Screen Auth Container (Rendered when unauthenticated) -->
+    <div id="auth-container" style="display:none;"></div>
+
+    <!-- Authenticated Dashboard Shell (DriveFlow Layout) -->
+    <div class="df-app-layout" id="dashboard-container" style="display:none;">
+        <!-- Mobile Sidebar Backdrop -->
+        <div class="df-sidebar-backdrop d-none" id="df-sidebar-backdrop"></div>
+
+        <!-- =============================================================== -->
+        <!-- COMPACT DARK SIDEBAR                                            -->
+        <!-- =============================================================== -->
+        <aside class="df-sidebar" id="df-sidebar">
+            <!-- Brand Header -->
+            <div class="df-sidebar-brand">
+                <div class="df-sidebar-brand-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <div class="df-sidebar-brand-text">
+                    <p class="df-brand-tag" id="sidebar-brand-tag">INDIA DEPA FIDUCIARY</p>
+                    <h2 class="df-brand-title" id="sidebar-brand-title">Consent Manager</h2>
+                </div>
+            </div>
+
+            <!-- Active User Session Card -->
+            <div class="df-sidebar-user">
+                <div class="df-user-avatar" id="sidebar-user-avatar">SA</div>
+                <div class="df-user-details">
+                    <p class="df-user-email" id="sidebar-user-name">superadmin@depa.cm</p>
+                    <div class="df-user-role-badge">
+                        <span class="df-status-dot"></span>
+                        <span id="sidebar-user-role">Regulatory Super Admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="df-sidebar-nav" id="df-sidebar-nav">
+                <!-- Dynamically populated based on active role -->
+            </nav>
+
+            <!-- Bottom Session Actions -->
+            <div class="df-sidebar-footer">
+                <button type="button" class="df-logout-btn" id="btn-sidebar-logout" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out Authority</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- =============================================================== -->
+        <!-- MAIN CONTENT AREA & WHITE TOPBAR                                -->
+        <!-- =============================================================== -->
+        <div class="df-main-content">
+            <!-- White Top Navigation Bar -->
+            <header class="df-top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-sm btn-light border d-lg-none" id="btn-toggle-sidebar" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <nav class="df-navbar-breadcrumb" id="df-topbar-breadcrumb">
+                        <span>DEPA REGULATORY ROOT</span>
+                        <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
+                        <span>SUPER ADMIN</span>
+                        <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
+                        <span class="text-dark fw-bold">Federation Overview</span>
+                    </nav>
+                </div>
+
+                <div class="df-navbar-actions">
+                    <div class="badge bg-light text-dark border px-3 py-2 rounded-pill font-monospace small d-none d-sm-inline-flex align-items-center gap-2">
+                        <span class="df-status-dot"></span>
+                        <span id="topbar-health-status">CM ROOT: 8095 • ONLINE</span>
+                    </div>
+
+                    <div class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill font-monospace small d-none d-xl-inline-block" id="topbar-clock">
+                        --:--:-- IST
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 px-2 py-1 bg-light rounded-pill border">
+                        <div class="df-user-avatar" style="width:28px; height:28px; font-size:0.75rem;" id="topbar-user-avatar">SA</div>
+                        <span class="small fw-semibold text-dark me-1 d-none d-md-inline" id="topbar-user-email">superadmin@depa.cm</span>
+                    </div>
+
+                    <button type="button" class="df-icon-btn" title="Sign Out" onclick="handleLogout()">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Module Content Scrollable Area -->
+            <main class="df-content-scrollable" id="df-main-view">
+                <!-- Page modules render here dynamically -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Modular UI, Services, Auth & Routing -->
+    <script src="vendor/js/bootstrap.bundle.min.js"></script>
+    <script src="config.js"></script>
+    <script src="js/ui-components.js"></script>
+    <script src="js/services/api.js"></script>
+    <script src="js/auth/session.js"></script>
+    <script src="js/auth/auth-controller.js"></script>
+    <script src="js/pages/login-super-admin.js"></script>
+    <script src="js/pages/login-org-admin.js"></script>
+    <!-- Super Admin Dashboard Modules -->
+    <script src="js/pages/super-admin/overview.js"></script>
+    <script src="js/pages/super-admin/organizations.js"></script>
+    <script src="js/pages/super-admin/administrators.js"></script>
+    <script src="js/pages/super-admin/audit-logs.js"></script>
+    <script src="js/pages/super-admin/trust-overview.js"></script>
+    <!-- Organization Admin Dashboard Modules -->
+    <script src="js/pages/org-admin/overview.js"></script>
+    <script src="js/pages/org-admin/profile.js"></script>
+    <script src="js/pages/org-admin/staff.js"></script>
+    <script src="js/pages/org-admin/consents.js"></script>
+    <script src="js/pages/org-admin/audit-logs.js"></script>
+    <script src="js/pages/org-admin/keys.js"></script>
+    <!-- Router & Application Controller -->
+    <script src="js/router.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

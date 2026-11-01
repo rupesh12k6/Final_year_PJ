@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+logs/
 
 # BlueJ files
 *.ctxt
@@ -46,3 +47,9 @@ buildNumber.properties
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Local database, runtime, and tool binaries
+pg_data/
+maven/
+.running_pids.json
+.tmp_chrome_*/

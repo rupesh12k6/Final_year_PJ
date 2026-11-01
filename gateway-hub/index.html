@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPA Academic Trust Network | Gateway Hub</title>
+    <meta name="description" content="India Data Empowerment & Protection Architecture (DEPA) for Higher Education. Gateway hub for Consent Manager System and College Academic Exchange System.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+</head>
+<body style="background: #F9FAFB;">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #4F46E5, #06B6D4); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">🛡️</div>
+            <div class="top-bar-title">
+                <p>INDIA DEPA ACADEMIC FEDERATION</p>
+                <h3>Academic Trust Network Gateway</h3>
+            </div>
+        </div>
+
+        <div class="top-bar-right">
+            <!-- Live Service Health Status -->
+            <div class="service-health-group">
+                <div class="health-node">
+                    <span class="health-dot online" id="dot-cm"></span>
+                    <span>CM :8095</span>
+                </div>
+                <span style="color:#D1D5DB">|</span>
+                <div class="health-node">
+                    <span class="health-dot online" id="dot-col-a"></span>
+                    <span>College A :8081</span>
+                </div>
+                <span style="color:#D1D5DB">|</span>
+                <div class="health-node">
+                    <span class="health-dot online" id="dot-col-b"></span>
+                    <span>College B :8082</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Gateway Landing Container -->
+    <div class="gateway-container">
+        <div style="text-align: center; max-width: 650px;">
+            <span class="badge badge-info" style="margin-bottom: 0.75rem; font-size: 0.78rem;">MINISTRY OF EDUCATION & MITY COMPLIANT DEPA</span>
+            <h1 style="font-family: var(--font-heading); font-size: 2.25rem; font-weight: 800; color: #111827; line-height: 1.2;">
+                Academic Credential Trust & Consent Architecture
+            </h1>
+            <p style="color: #6B7280; font-size: 0.98rem; margin-top: 0.75rem; line-height: 1.6;">
+                Separate interfaces for regulatory <strong>Consent Management</strong> and decentralized <strong>College Academic Exchange</strong> under India's Data Empowerment and Protection Architecture.
+            </p>
+        </div>
+
+        <!-- Three Large Placement Style Portal Launch Cards -->
+        <div class="gateway-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 1050px;">
+            <!-- System 1: Consent Manager -->
+            <a href="http://localhost:3001" target="_blank" class="gateway-card" style="border-color: rgba(59, 130, 246, 0.4);">
+                <div class="gateway-card-icon gateway-cm-icon" style="background: rgba(59, 130, 246, 0.15); color: #2563EB;">🏛️</div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="font-size: 1.15rem;">Consent Manager</h3>
+                    <span class="badge badge-info" style="font-size: 0.65rem;">UI :3001 | API :8095</span>
+                </div>
+                <p style="font-size: 0.82rem; margin-top: 0.4rem; color: #4B5563; min-height: 48px;">
+                    Central regulatory fiduciary. Manages student data sovereignty, granular consent approvals, RS256 token minting, and immutable audit logs.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.8rem;">
+                    <span class="badge badge-cyan" style="font-size:0.68rem;">CM Admin Logs</span>
+                    <span class="badge badge-active" style="font-size:0.68rem;">RS256 Tokens</span>
+                    <span class="badge badge-revoked" style="font-size:0.68rem;">Real-Time Revocation</span>
+                    <span class="badge badge-info" style="font-size:0.68rem;">100% Data Blind</span>
+                </div>
+                <div class="gateway-card-link" style="color: #2563EB; margin-top: 1rem;">
+                    <span>Launch CM Portal (:3001)</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <!-- System 2: College A University -->
+            <a href="http://localhost:3002" target="_blank" class="gateway-card" style="border-color: rgba(16, 185, 129, 0.4);">
+                <div class="gateway-card-icon gateway-col-icon" style="background: rgba(16, 185, 129, 0.15); color: #059669;">🎓</div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="font-size: 1.15rem;">College A University</h3>
+                    <span class="badge badge-active" style="font-size: 0.65rem;">UI :3002 | API :8081</span>
+                </div>
+                <p style="font-size: 0.82rem; margin-top: 0.4rem; color: #4B5563; min-height: 48px;">
+                    <strong>Data Provider Node</strong>. Custodian of official student records (Alice Johnson). Validates CM tokens and dispatches encrypted records via Diffie-Hellman.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.8rem;">
+                    <span class="badge badge-active" style="font-size:0.68rem;">Student Database</span>
+                    <span class="badge badge-info" style="font-size:0.68rem;">Inbound Monitor</span>
+                    <span class="badge badge-pending" style="font-size:0.68rem;">DH Encrypted Transfer</span>
+                    <span class="badge badge-cyan" style="font-size:0.68rem;">STU-2023-001</span>
+                </div>
+                <div class="gateway-card-link" style="color: #059669; margin-top: 1rem;">
+                    <span>Launch College A (:3002)</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <!-- System 3: College B University -->
+            <a href="http://localhost:3003" target="_blank" class="gateway-card" style="border-color: rgba(139, 92, 246, 0.4);">
+                <div class="gateway-card-icon" style="background: rgba(139, 92, 246, 0.15); color: #7C3AED; width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">🏛️</div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="font-size: 1.15rem;">College B University</h3>
+                    <span class="badge" style="font-size: 0.65rem; background: #7C3AED; color: #FFF;">UI :3003 | API :8082</span>
+                </div>
+                <p style="font-size: 0.82rem; margin-top: 0.4rem; color: #4B5563; min-height: 48px;">
+                    <strong>Data Consumer Node</strong>. Requests external student records from College A for admissions evaluation. Decrypts credentials and verifies CM grants.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.8rem;">
+                    <span class="badge badge-active" style="font-size:0.68rem;">Get Data from College A</span>
+                    <span class="badge badge-cyan" style="font-size:0.68rem;">View Received Data</span>
+                    <span class="badge badge-info" style="font-size:0.68rem;">Degree Evaluator</span>
+                    <span class="badge badge-pending" style="font-size:0.68rem;">Admissions Roster</span>
+                </div>
+                <div class="gateway-card-link" style="color: #7C3AED; margin-top: 1rem;">
+                    <span>Launch College B (:3003)</span>
+                    <span>→</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Architecture Summary Callout -->
+        <div class="card" style="max-width: 900px; width: 100%; margin-top: 2rem;">
+            <div class="card-body" style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="font-size: 2.25rem;">🔐</div>
+                <div>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #111827;">Guaranteed Data Blindness Architecture</h4>
+                    <p style="font-size: 0.82rem; color: #6B7280; margin-top: 0.25rem; line-height: 1.5;">
+                        The Consent Manager never touches or stores raw student transcripts, CGPA, or degree certificates. Payload data travels strictly peer-to-peer between College Provider and College Consumer via ephemeral Diffie-Hellman + AES-GCM-256 encryption.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await pingAllServices();
+        });
+    </script>
+</body>
+</html>

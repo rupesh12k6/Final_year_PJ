@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent Manager System | DEPA Academic Trust</title>
+    <meta name="description" content="Official Electronic Consent Manager for Higher Education. Manages cryptographic consent artefacts, RS256 access tokens, and real-time revocation under India DEPA framework.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+</head>
+<body>
+
+    <div class="layout-container">
+        <!-- Sidebar Navigation (Placement Portal Style) -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">🏛️</div>
+                <div class="sidebar-brand-text">
+                    <p>DEPA ARCHITECTURE</p>
+                    <h2>Consent Manager</h2>
+                </div>
+            </div>
+
+            <!-- User Profile in Sidebar -->
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-user-avatar">SA</div>
+                <div class="user-info">
+                    <p class="user-name" id="sidebar-user-name">superadmin@depa.cm</p>
+                    <p class="user-role-badge">
+                        <span class="health-dot online" style="width:6px; height:6px;"></span>
+                        <span id="sidebar-user-role">Super Admin</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Role-Based Persona Selector -->
+            <div style="padding: 0.75rem 0.85rem; border-bottom: 1px solid var(--sidebar-border); background: rgba(0,0,0,0.2);">
+                <label style="font-size:0.68rem; color:#9CA3AF; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:0.35rem;">
+                    Active Role / Persona:
+                </label>
+                <select id="cm-role-selector" class="college-select-input" onchange="handleCmRoleChange(this.value)">
+                    <optgroup label="Consent Manager Control Plane">
+                        <option value="CM_ADMIN" selected>🛡️ CM Admin (superadmin@depa.cm)</option>
+                    </optgroup>
+                    <optgroup label="Institutional Administrators (HEI)">
+                        <option value="INST_ADMIN_A">🏛️ Institute Admin - College A</option>
+                        <option value="INST_ADMIN_B">🏛️ Institute Admin - College B</option>
+                    </optgroup>
+                    <optgroup label="Data Principals (Students)">
+                        <option value="USER_ALICE">🎓 User / Student - Alice Johnson</option>
+                        <option value="USER_BOB">🎓 User / Student - Bob Roberts</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Sidebar Navigation Links with Role-Based Visibility -->
+            <nav class="sidebar-nav">
+                <p class="nav-section-title" id="sidebar-section-title-core">Core Modules</p>
+                
+                <!-- 1. Dashboard (CM Admin & Institute Admin) -->
+                <button class="sidebar-nav-item active" id="nav-cm-dashboard" data-roles="CM_ADMIN,INST_ADMIN_A,INST_ADMIN_B" onclick="switchCmSection('dashboard')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Zm16 14a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2ZM4 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6Zm16-2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6Z"/></svg>
+                    <span id="nav-text-dashboard">Federation Dashboard</span>
+                </button>
+
+                <!-- 2. Institute Students & Import (Institute Admin Only) -->
+                <button class="sidebar-nav-item" id="nav-cm-inst-roster" data-roles="INST_ADMIN_A,INST_ADMIN_B" onclick="switchCmSection('inst-roster')" style="display:none;">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <span>Institution Students & Import</span>
+                </button>
+
+                <!-- 3. Student Consents & Inbox (User / Student Only) -->
+                <button class="sidebar-nav-item" id="nav-cm-student" data-roles="USER_ALICE,USER_BOB" onclick="switchCmSection('student')" style="display:none;">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z"/></svg>
+                    <span>Student Consents & Inbox</span>
+                    <span class="sidebar-nav-badge" id="sidebar-pending-badge">0</span>
+                </button>
+
+                <!-- 4. Active Grants & Revocation (User / Student Only) -->
+                <button class="sidebar-nav-item" id="nav-cm-grants" data-roles="USER_ALICE,USER_BOB" onclick="switchCmSection('grants')" style="display:none;">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <span>Active Grants & Revocation</span>
+                </button>
+
+                <p class="nav-section-title" id="sidebar-section-title-gov">Governance & Trust</p>
+
+                <!-- 5. Academic Institutions (CM Admin Only) -->
+                <button class="sidebar-nav-item" id="nav-cm-orgs" data-roles="CM_ADMIN" onclick="switchCmSection('orgs')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <span>Academic Institutions</span>
+                </button>
+
+                <!-- 6. Security Audit Logs (CM Admin & Institute Admin) -->
+                <button class="sidebar-nav-item" id="nav-cm-audit" data-roles="CM_ADMIN,INST_ADMIN_A,INST_ADMIN_B" onclick="switchCmSection('audit')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    <span id="nav-text-audit">Security Audit Logs</span>
+                </button>
+
+                <!-- 7. RS256 Key Trust Center (All Roles) -->
+                <button class="sidebar-nav-item" id="nav-cm-trust" data-roles="CM_ADMIN,INST_ADMIN_A,INST_ADMIN_B,USER_ALICE,USER_BOB" onclick="switchCmSection('trust')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <span id="nav-text-trust">RS256 Key Trust Center</span>
+                </button>
+
+                <!-- 8. Student Onboarding & OTP (CM Admin Only) -->
+                <button class="sidebar-nav-item" id="nav-cm-onboarding" data-roles="CM_ADMIN" onclick="switchCmSection('onboarding')">
+                    <svg fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span>Student Onboarding & OTP</span>
+                </button>
+            </nav>
+
+            <!-- Bottom System Switcher -->
+            <div class="sidebar-footer">
+                <a href="college.html" class="btn-switch-system">
+                    <span>🎓</span>
+                    <span>Launch College Portal →</span>
+                </a>
+                <a href="index.html" style="text-align:center; font-size:0.75rem; color:#6B7280; text-decoration:none; margin-top:2px;">← System Gateway Home</a>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <div class="top-bar-title">
+                        <p>DEPA CONSENT MANAGEMENT ARTEFACT REPOSITORY</p>
+                        <h3 id="top-bar-page-title">Consent Manager Dashboard</h3>
+                    </div>
+                </div>
+
+                <div class="top-bar-right">
+                    <!-- Live Service Health Status -->
+                    <div class="service-health-group">
+                        <div class="health-node">
+                            <span class="health-dot online" id="dot-cm"></span>
+                            <span>CM :8095</span>
+                        </div>
+                        <span style="color:#D1D5DB">|</span>
+                        <div class="health-node">
+                            <span class="health-dot online" id="dot-col-a"></span>
+                            <span>Col A :8081</span>
+                        </div>
+                        <span style="color:#D1D5DB">|</span>
+                        <div class="health-node">
+                            <span class="health-dot online" id="dot-col-b"></span>
+                            <span>Col B :8082</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="openNetworkConfigModal()" title="Configure Multi-Server Deployment Endpoints">
+                        <span>⚙️ Server Endpoints</span>
+                    </button>
+
+                    <a href="college.html" class="btn btn-secondary btn-sm" style="font-weight:600;">
+                        <span>🎓 Go to College Portal</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="page-content">
+
+                <!-- =============================================================== -->
+                <!-- SECTION 1: DASHBOARD                                            -->
+                <!-- =============================================================== -->
+                <div id="section-cm-dashboard" class="cm-page-section">
+                    <!-- Placement Portal Style Dark Banner -->
+                    <div class="banner-slate">
+                        <div class="banner-left">
+                            <p class="banner-subtitle">India DEPA Compliance Architecture</p>
+                            <h2 class="banner-title">Electronic Consent Manager System</h2>
+                            <p class="banner-desc">Acts as a regulatory fiduciary managing cryptographically signed RS256 Access Grants and enforcing real-time revocation. <strong>Zero student payload passes through this system.</strong></p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" id="banner-active-institutions" style="color:#38BDF8;">2</p>
+                                <p class="banner-stat-label">Colleges Online</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" id="banner-active-grants" style="color:#34D399;">--</p>
+                                <p class="banner-stat-label">Active Tokens</p>
+                            </div>
+                            <div class="banner-stat-box">
+                                <p class="banner-stat-value" style="color:#FBBF24;">100%</p>
+                                <p class="banner-stat-label">Data Blindness</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 Placement Style Stat Cards -->
+                    <div class="stat-cards-grid" style="margin-top: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-indigo">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Member Colleges</p>
+                                <p class="stat-number" id="stat-orgs-count">2</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-amber">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Pending Consents</p>
+                                <p class="stat-number" id="stat-pending-count" style="color:var(--amber-text);">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-emerald">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Active RS256 Grants</p>
+                                <p class="stat-number" id="stat-active-count" style="color:var(--emerald-text);">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-rose">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Revoked Consents</p>
+                                <p class="stat-number" id="stat-revoked-count" style="color:var(--rose-text);">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Navigation Links -->
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.25rem; margin-top:1.5rem;">
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCmSection('student')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">👩‍🎓</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">Student Consent Portal</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Review incoming verification requests and authorize granular field access.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:var(--primary); margin-top:1rem;">Open Student Inbox →</p>
+                        </div>
+
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCmSection('grants')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">📋</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">Active Grants & Revocation</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Inspect minted RS256 JWT tokens and exercise 1-click real-time revocation.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:var(--primary); margin-top:1rem;">Manage Active Grants →</p>
+                        </div>
+
+                        <div class="card" style="padding:1.5rem; cursor:pointer;" onclick="switchCmSection('orgs')">
+                            <div style="font-size:2rem; margin-bottom:0.75rem;">🏛️</div>
+                            <h4 style="font-size:1rem; font-weight:700; color:var(--text-primary);">Member Academic Colleges</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">View registered institutional nodes and configure inter-college trust.</p>
+                            <p style="font-size:0.78rem; font-weight:600; color:var(--primary); margin-top:1rem;">View Institutions →</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 2: STUDENT CONSENTS & INBOX                             -->
+                <!-- =============================================================== -->
+                <div id="section-cm-student" class="cm-page-section" style="display: none;">
+                    <!-- Student Identity Card -->
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div class="card-body" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="user-avatar" id="cm-active-student-avatar" style="width: 48px; height: 48px; font-size: 1.1rem; background: var(--primary);">AJ</div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                                        <h3 id="cm-active-student-name" style="font-size: 1.15rem; font-weight:700; color:var(--text-primary);">Alice Johnson</h3>
+                                        <span class="badge badge-info">AUTHENTICATED PRINCIPAL</span>
+                                    </div>
+                                    <p id="cm-active-student-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+                                        Student ID: <strong>STU-2023-001</strong> | Official Email: <strong>student1@collegea.edu</strong> | College A
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Switch Student:</label>
+                                <select id="active-student-select" class="form-control" style="font-size:0.85rem; padding:4px 8px; width:auto;" onchange="switchActiveStudent(this.value)">
+                                    <option value="alice" selected>Alice Johnson (College A · STU-2023-001)</option>
+                                    <option value="bob">Bob Roberts (College B · S2001)</option>
+                                </select>
+                                <button class="btn btn-secondary btn-sm" onclick="loadStudentPendingConsents(); loadStudentActiveConsents();">🔄 Refresh Inbox</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Consent Requests Inbox -->
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div class="card-header">
+                            <div>
+                                <h3>📥 Pending Consent Requests</h3>
+                                <p>Institutions requesting access to your official academic records</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="pending-requests-container">
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">Checking pending consent requests...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 3: ACTIVE GRANTS & REVOCATION                           -->
+                <!-- =============================================================== -->
+                <div id="section-cm-grants" class="cm-page-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>📋 Active Consents & Historical Grants Ledger</h3>
+                                <p>Inspect minted cryptographic tokens and exercise your sovereign right to instantaneously revoke access.</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadStudentActiveConsents()">🔄 Refresh Ledger</button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Consent ID</th>
+                                        <th>Requester College</th>
+                                        <th>Stated Purpose</th>
+                                        <th>Approved Scope</th>
+                                        <th>Status</th>
+                                        <th>Expires At</th>
+                                        <th>Cryptographic Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="active-consents-tbody">
+                                    <tr><td colspan="7" style="text-align:center; color: var(--text-muted);">No active consents found.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 4: ACADEMIC INSTITUTIONS                                -->
+                <!-- =============================================================== -->
+                <div id="section-cm-orgs" class="cm-page-section" style="display: none;">
+                    <div class="grid-2" style="margin-bottom: 1.5rem;">
+                        <!-- Registered Colleges Table -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>🏛️ Registered Academic Institutions</h3>
+                                    <p>Colleges onboarded to the DEPA Inter-College Network</p>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="loadCmOrganizations()">🔄 Refresh</button>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Institution Name</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orgs-table-tbody">
+                                        <tr><td colspan="4" style="text-align:center;">Loading institutions...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Onboard New College -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>➕ Onboard New Academic College</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-register-org" onsubmit="handleRegisterOrg(event)">
+                                    <div class="form-group">
+                                        <label>Institution Code</label>
+                                        <input type="text" id="new-org-code" class="form-control" placeholder="e.g. COLLEGE_C" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Institution Official Name</label>
+                                        <input type="text" id="new-org-name" class="form-control" placeholder="e.g. National Institute of Technology" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Authorized Contact Email</label>
+                                        <input type="email" id="new-org-email" class="form-control" placeholder="contact@nit.edu" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">🚀 Register & Issue Trust Credentials</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 5: RS256 TRUST CENTER                                   -->
+                <!-- =============================================================== -->
+                <div id="section-cm-trust" class="cm-page-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>🔐 Cryptographic Trust Anchor (RS256 Public Key)</h3>
+                                <p>All member colleges use this public key to verify that access grant tokens were legitimately signed by the Consent Manager.</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="copyCmPublicKey()">📋 Copy PEM</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.25rem;">
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Algorithm</p>
+                                    <p class="cert-item-value" style="font-family:var(--font-mono);">RS256 (RSA-SHA256)</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Key Length</p>
+                                    <p class="cert-item-value" style="font-family:var(--font-mono);">2048-bit RSA</p>
+                                </div>
+                                <div class="cert-item">
+                                    <p class="cert-item-label">Token Expiration SLA</p>
+                                    <p class="cert-item-value" style="font-family:var(--font-mono);">15 Minutes (Ephemeral)</p>
+                                </div>
+                            </div>
+                            <pre class="crypto-console" id="cm-public-key-display">Loading public key from /api/access-grants/public-key...</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION: INSTITUTION STUDENTS & ROSTER (INSTITUTE ADMIN)        -->
+                <!-- =============================================================== -->
+                <div id="section-cm-inst-roster" class="cm-page-section" style="display: none;">
+                    <!-- Institution Scope Banner -->
+                    <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #065F46, #047857); color: #FFF; border: none;">
+                        <div class="card-body" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <span class="badge" style="background: rgba(255,255,255,0.2); color: #FFF; margin-bottom: 0.5rem;">INSTITUTION BOUNDARY</span>
+                                <h3 id="inst-roster-title" style="margin: 0; font-size: 1.35rem; color: #FFF;">College A University Student Registry</h3>
+                                <p id="inst-roster-desc" style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #D1FAE5;">Manage registered students, dispatch onboarding invitations, and configure data principal consent access.</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="loadOrgUsers()" style="background: rgba(255,255,255,0.15); color: #FFF; border-color: rgba(255,255,255,0.3);">🔄 Refresh Roster</button>
+                        </div>
+                    </div>
+
+                    <!-- 2 Column Layout: Quick Batch Import on left, Registered Students on right -->
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+                        <!-- Left: Import Form -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>📥 Onboard New Student</h3>
+                                    <p>Dispatch official onboarding invitation</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-import-student" onsubmit="handleImportStudentSubmit(event)">
+                                    <div class="form-group">
+                                        <label>Student ID</label>
+                                        <input type="text" id="imp-student-id" class="form-control" placeholder="e.g. STU-2024-009" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Legal Name</label>
+                                        <input type="text" id="imp-student-name" class="form-control" placeholder="e.g. John Doe" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Institutional Email</label>
+                                        <input type="email" id="imp-student-email" class="form-control" placeholder="e.g. student@college.edu" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:0.5rem;">
+                                        ✉️ Dispatch Onboarding Invitation
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Right: Registered Students Table -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h3>👥 Enrolled Institution Students</h3>
+                                    <p>Students associated with this institutional domain in Consent Manager</p>
+                                </div>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Student ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inst-students-tbody">
+                                        <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading roster...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 6: SECURITY AUDIT LOGS (WITH USER ID & TIMESTAMP)       -->
+                <!-- =============================================================== -->
+                <div id="section-cm-audit" class="cm-page-section" style="display: none;">
+                    
+                    <!-- Top Metric Cards for Audit Trail -->
+                    <div class="stat-cards-grid" style="margin-bottom: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-indigo">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Total Logged Events</p>
+                                <p class="stat-number" id="audit-stat-total" style="color:var(--primary);">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-emerald">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Active Actors (User IDs)</p>
+                                <p class="stat-number" id="audit-stat-actors" style="color:#059669;">--</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-cyan">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Active Audit Scope</p>
+                                <p class="stat-number" id="audit-stat-scope" style="font-size:1.1rem; color:#0284C7; font-weight:700;">Global</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap stat-icon-amber">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Audit Log Integrity</p>
+                                <p class="stat-number" style="font-size:1.05rem; color:#D97706; font-weight:700;">SHA-256 Validated</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Trail Card -->
+                    <div class="card">
+                        <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <h3 id="audit-section-title">📜 Security Audit Trail</h3>
+                                    <span class="badge badge-info" id="audit-scope-badge">GLOBAL FEDERATION</span>
+                                </div>
+                                <p id="audit-section-desc">Immutable chronological log of all access grants, student approvals, authentication, and cryptographic token validations.</p>
+                            </div>
+                            
+                            <!-- Search & Filter Controls -->
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <select id="audit-event-filter" class="form-control" style="font-size: 0.8rem; padding: 4px 8px; width: auto;" onchange="filterAuditLogs()">
+                                    <option value="ALL">All Event Types</option>
+                                    <option value="LOGIN_SUCCESS">Login Success</option>
+                                    <option value="CONSENT_REQUESTED">Consent Requested</option>
+                                    <option value="CONSENT_APPROVED">Consent Approved</option>
+                                    <option value="ACCESS_GRANTED">Access Granted</option>
+                                    <option value="CONSENT_REVOKED">Consent Revoked</option>
+                                    <option value="TOKEN_VALIDATED">Token Validated</option>
+                                    <option value="STUDENTS_IMPORTED">Students Imported</option>
+                                </select>
+                                <input type="text" id="audit-user-search" class="form-control" placeholder="Search by User ID..." style="font-size: 0.8rem; padding: 4px 8px; width: 170px;" oninput="filterAuditLogs()">
+                                <button class="btn btn-secondary btn-sm" onclick="loadCmAuditLogs()">🔄 Refresh</button>
+                            </div>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 160px;">🕒 Timestamp (UTC / Local)</th>
+                                        <th style="min-width: 150px;">👤 Actor (User ID & Role)</th>
+                                        <th style="min-width: 140px;">⚡ Event Type</th>
+                                        <th style="min-width: 140px;">🎯 Target Resource</th>
+                                        <th style="min-width: 110px;">🏛️ Organization</th>
+                                        <th>📝 Audit Description & Cryptographic Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-logs-tbody">
+                                    <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Click refresh to load audit trail.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =============================================================== -->
+                <!-- SECTION 7: STUDENT ONBOARDING & OTP                             -->
+                <!-- =============================================================== -->
+                <div id="section-cm-onboarding" class="cm-page-section" style="display: none;">
+                    <div class="card" style="max-width: 650px; margin: 0 auto;">
+                        <div class="card-header">
+                            <div>
+                                <h3>✉️ Complete Student Account Activation & OTP</h3>
+                                <p>Redeem invitation token received from your college and verify 6-digit OTP</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Invitation Token</label>
+                                <input type="text" id="reg-token-input" class="form-control" placeholder="Paste invitation token...">
+                            </div>
+                            <div class="form-group">
+                                <label>Create Account Password</label>
+                                <input type="password" id="reg-password-input" class="form-control" placeholder="••••••••••••">
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.25rem;" onclick="handleCompleteRegistration()">
+                                🚀 Submit & Request OTP
+                            </button>
+
+                            <div id="otp-section" style="display: none; border-top: 1px solid var(--border-card); padding-top: 1.25rem;">
+                                <div class="form-group">
+                                    <label>6-Digit Verification OTP (Check Server Console Log)</label>
+                                    <input type="text" id="reg-otp-input" class="form-control" placeholder="e.g. 123456" maxlength="6">
+                                </div>
+                                <button class="btn btn-success" style="width: 100%;" onclick="handleVerifyOtp()">
+                                    ✅ Verify OTP & Activate Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal 1: Consent Approval & Granular Scope Selection -->
+    <div class="modal-overlay" id="consent-approval-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <div>
+                    <h3>🛡️ Review & Grant Consent</h3>
+                    <p>Select which academic records you agree to share</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeApprovalModal()">✕</button>
+            </div>
+            <div class="card-body">
+                <div class="cert-item" style="margin-bottom: 1rem;">
+                    <p class="cert-item-label">Requesting Institution</p>
+                    <p class="cert-item-value" id="modal-req-org">College B University</p>
+                </div>
+
+                <div class="cert-item" style="margin-bottom: 1rem;">
+                    <p class="cert-item-label">Stated Purpose</p>
+                    <p class="cert-item-value" id="modal-req-purpose" style="font-weight: normal;">Academic verification</p>
+                </div>
+
+                <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">
+                    Select Attributes to Share (Granular Permission):
+                </label>
+                <div class="scope-checkbox-grid" id="modal-fields-selector">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
+                    <button class="btn btn-success" style="flex: 2;" onclick="submitConsentDecision(true)">
+                        ✅ Approve Consent & Issue Token
+                    </button>
+                    <button class="btn btn-danger" style="flex: 1;" onclick="submitConsentDecision(false)">
+                        ❌ Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Cryptographic Token Inspector -->
+    <div class="modal-overlay" id="token-inspector-modal">
+        <div class="modal-content" style="max-width: 680px;">
+            <div class="card-header">
+                <div>
+                    <h3>🔍 Cryptographic RS256 Token Inspector</h3>
+                    <p>Decoded JSON Web Token issued by Consent Manager</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeTokenModal()">✕</button>
+            </div>
+            <div class="card-body">
+                <div class="cert-item" style="margin-bottom: 1rem;">
+                    <p class="cert-item-label">Grant ID</p>
+                    <p class="cert-item-value" id="token-grant-id" style="font-family: var(--font-mono); color: var(--primary);">GRNT_...</p>
+                </div>
+
+                <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary);">Decoded Token Claims:</label>
+                <pre class="crypto-console" id="token-decoded-display" style="margin-top:0.35rem; max-height:180px;"></pre>
+
+                <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-secondary btn-sm" onclick="copyRawToken()">📋 Copy Raw Token</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // CM Portal Script Initialization
+        document.addEventListener('DOMContentLoaded', async () => {
+            await autoSetupTokens();
+            await pingAllServices();
+            handleCmRoleChange('CM_ADMIN');
+            loadCmDashboardStats();
+            loadCmOrganizations();
+            fetchCmPublicKey();
+        });
+
+        function switchCmSection(section) {
+            document.querySelectorAll('.cm-page-section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+
+            const targetSection = document.getElementById(`section-cm-${section}`);
+            const targetBtn = document.getElementById(`nav-cm-${section}`);
+            if (targetSection) targetSection.style.display = 'block';
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const titleMap = {
+                'dashboard': 'Consent Manager Dashboard',
+                'inst-roster': 'Institution Students & Onboarding Roster',
+                'student': 'Student Consents & Inbox',
+                'grants': 'Active Grants & Revocation Ledger',
+                'orgs': 'Member Academic Institutions',
+                'trust': 'Cryptographic RS256 Trust Center',
+                'audit': 'Security Audit Logs Explorer',
+                'onboarding': 'Student Registration & OTP Activation'
+            };
+            document.getElementById('top-bar-page-title').textContent = titleMap[section] || 'Consent Manager';
+
+            if (section === 'student') { loadStudentPendingConsents(); }
+            if (section === 'grants') { loadStudentActiveConsents(); }
+            if (section === 'inst-roster') { loadOrgUsers(); }
+            if (section === 'orgs') { loadCmOrganizations(); }
+            if (section === 'trust') { fetchCmPublicKey(); }
+            if (section === 'audit') { loadCmAuditLogs(); }
+            if (section === 'dashboard') { loadCmDashboardStats(); }
+        }
+
+        async function loadCmDashboardStats() {
+            try {
+                if (!superAdminToken) await autoSetupTokens();
+                const res = await fetch(`${CM_BASE_URL}/api/admin/organizations`, {
+                    headers: { 'Authorization': `Bearer ${superAdminToken}` }
+                });
+                if (res.ok) {
+                    const orgs = await res.json();
+                    const statCount = document.getElementById('stat-orgs-count');
+                    const bannerCount = document.getElementById('banner-active-institutions');
+                    if (statCount) statCount.textContent = orgs.length;
+                    if (bannerCount) bannerCount.textContent = orgs.length;
+                }
+            } catch(e) {}
+        }
+    </script>
+
+    <!-- Multi-Server Network Endpoints Modal -->
+    <div id="network-config-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 620px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="margin:0; font-size:1.15rem; font-weight:700; color:#111827;">⚙️ Multi-Server Network Configuration</h3>
+                    <p style="margin:4px 0 0 0; font-size:0.8rem; color:#6B7280;">Configure endpoints when Consent Manager, College A, and College B run on separate server IPs or domains.</p>
+                </div>
+                <button class="modal-close" onclick="closeNetworkConfigModal()">&times;</button>
+            </div>
+            <form onsubmit="saveNetworkConfig(event)">
+                <div class="modal-body" style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:12px; font-size:0.825rem; color:#166534;">
+                        <strong>🌐 Distributed Deployment Mode:</strong> Enter the IP addresses or hostnames of each deployed server (e.g. <code>http://192.168.1.100:8095</code>). Changes are saved to local storage and used immediately for all cryptographic and API calls.
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🏛️ Server 1: Consent Manager Base URL</label>
+                        <input type="text" id="cfg-cm-url" class="form-control" placeholder="http://192.168.1.10:8095" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8095</code> (Central Consent Registry & RS256 Trust Anchor)</p>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🎓 Server 2: College A Base URL</label>
+                        <input type="text" id="cfg-col-a-url" class="form-control" placeholder="http://192.168.1.11:8081" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8081</code> (Institution A dual Provider/Consumer node)</p>
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-weight:600; color:#374151;">🎓 Server 3: College B Base URL</label>
+                        <input type="text" id="cfg-col-b-url" class="form-control" placeholder="http://192.168.1.12:8082" style="font-family:var(--font-mono); font-size:0.875rem;" required>
+                        <p style="margin:4px 0 0 0; font-size:0.75rem; color:#6B7280;">Default: <code>http://localhost:8082</code> (Institution B dual Provider/Consumer node)</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #E5E7EB; padding-top:16px; margin-top:8px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetNetworkConfig()">Reset to Defaults</button>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="closeNetworkConfigModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Save & Apply Endpoints</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
